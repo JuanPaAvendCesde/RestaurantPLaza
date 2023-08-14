@@ -2,6 +2,7 @@ package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import org.pragma.restaurantplaza.domain.model.Owner;
 import org.pragma.restaurantplaza.domain.spi.IOwnerPersistencePort;
+import org.pragma.restaurantplaza.infrastructure.exception.InvalidEmailException;
 import org.pragma.restaurantplaza.infrastructure.exception.OwnerAlreadyExistException;
 import org.pragma.restaurantplaza.infrastructure.exception.OwnerMustBeAdultException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OwnerEntity;
@@ -30,14 +31,26 @@ public class OwnerAdapter implements IOwnerPersistencePort {
         if (birthdate.isAfter(age)) {
             throw new OwnerMustBeAdultException("Owner must be over 18 years old");
         }
+
+        if (!isValidEmail(owner.getEmail())) {
+            throw new InvalidEmailException("Invalid email format");
+        }
         String passEncrypted = passWithBcrypt(owner.getPassword());
         owner.setPassword(passEncrypted);
         ownerRepository.save(ownerEntityMapper.toOwnerEntity(owner));
     }
+
+    private boolean isValidEmail(String email) {
+        String regex = "^(.+)@(.+)$";
+        return email.matches(regex);
+    }
+
     private String passWithBcrypt(String pass) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(pass);
     }
+
+
     @Override
     public List<Owner> getAllOwners() {
        List<OwnerEntity> ownerEntityList = ownerRepository.findAll();
