@@ -6,6 +6,7 @@ import org.pragma.restaurantplaza.application.dto.OwnerRequest;
 import org.pragma.restaurantplaza.application.handler.OwnerHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pragma.restaurantplaza.application.handler.RestaurantHandler;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
@@ -18,11 +19,12 @@ class AdminRestControllerTest {
 
     private AdminRestController adminRestController;
     private OwnerHandler ownerHandler;
+    private RestaurantHandler RestaurantHandler;
 
     @BeforeEach
     void setUp() {
         ownerHandler = mock(OwnerHandler.class);
-        adminRestController = new AdminRestController(ownerHandler);
+        adminRestController = new AdminRestController(ownerHandler, RestaurantHandler);
     }
 
     @Test

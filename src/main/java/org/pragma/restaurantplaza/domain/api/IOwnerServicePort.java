@@ -9,4 +9,6 @@ public interface IOwnerServicePort {
     void saveOwner(Owner owner);
 
     List<Owner> getAllOwners();
+
+    Owner findById(Owner ownerId);
 }

@@ -1,46 +1,40 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.entity;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.time.LocalDate;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "owner")
+@Table(name = "restaurant")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class OwnerEntity {
-
+public class RestaurantEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank
-    private int document;
-
+    private Integer nit;
+    @NotBlank
+    private String address;
+    @NotBlank
     @Size(max = 13)
     @Pattern(regexp = "[0-9+]")
-    @NotBlank
     private String phone;
     @NotBlank
-    @Past
-    private LocalDate fechaNacimineto;
+    private String urlLogo;
     @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String password;
-    @NotBlank
-    private String rol;
-
+    @OneToOne
+    @JoinColumn(name = "id")
+    private OwnerEntity ownerId;
 }

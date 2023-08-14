@@ -10,4 +10,6 @@ public interface IOwnerPersistencePort {
     void saveOwner(Owner owner);
 
     List<Owner> getAllOwners();
+
+    Owner findById(Owner ownerId);
 }
