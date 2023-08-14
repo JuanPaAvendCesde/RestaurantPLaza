@@ -19,17 +19,12 @@ public class OwnerHandler implements IOwnerHandler{
     private final IOwnerServicePort ownerServicePort;
     private final OwnerRequestMapper ownerRequestMapper;
     private final OwnerResponseMapper ownerResponseMapper;
-
-
-
-
     @Override
     public void saveOwner(OwnerRequest ownerRequest) {
         Owner owner = ownerRequestMapper.toOwner(ownerRequest);
         ownerServicePort.saveOwner(owner);
 
     }
-
     @Override
     public List<OwnerResponse> getAllOwners() {
         return ownerResponseMapper.toResponseList(ownerServicePort.getAllOwners());

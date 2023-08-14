@@ -24,7 +24,6 @@ public class OwnerAdapter implements IOwnerPersistencePort {
 
         if(ownerRepository.findById(owner.getId()).isPresent() ) {
             throw new OwnerAlreadyExistException("Owner already exists");
-
         }
         LocalDate birthdate = owner.getBirthdate();
         LocalDate age = LocalDate.now().minusYears(18);
@@ -39,8 +38,6 @@ public class OwnerAdapter implements IOwnerPersistencePort {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(pass);
     }
-
-
     @Override
     public List<Owner> getAllOwners() {
        List<OwnerEntity> ownerEntityList = ownerRepository.findAll();

@@ -10,22 +10,10 @@ import java.time.LocalDate;
 public class OwnerResponse {
 
     private String name;
-
-
     private int document;
-
-
     private String phone;
-
-
     private LocalDate birthdate;
-
-
     private String email;
-
-
     private String password;
-
-
     private String rol;
 }
