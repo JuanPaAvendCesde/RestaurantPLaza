@@ -31,14 +31,14 @@ public class AdminRestController {
     }
 
     @PostMapping("/saveRestaurant")
-    public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest,OwnerRequest ownerRequest) {
-        // Verificar que el propietario con el id proporcionado exista y tenga el rol de propietario
+    public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest) {
+
         Owner owner = ownerHandler.findById(restaurantRequest.getOwnerId());
         if (owner == null || !"Owner".equals(owner.getRol())) {
             return ResponseEntity.badRequest().body(" is not an owner");
         }
 
-        restauranteHandler.saveRestaurant(restaurantRequest, ownerRequest);
+        restauranteHandler.saveRestaurant(restaurantRequest);
         return ResponseEntity.ok("Restaurant created successfully");
     }
 }

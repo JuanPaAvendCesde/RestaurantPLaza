@@ -34,4 +34,5 @@ public class OwnerHandler implements IOwnerHandler{
     public Owner findById(Owner ownerId) {
         return ownerServicePort.findById(ownerId);
     }
+
 }
