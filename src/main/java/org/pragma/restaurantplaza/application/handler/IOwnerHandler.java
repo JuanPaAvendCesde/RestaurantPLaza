@@ -10,7 +10,5 @@ public interface IOwnerHandler {
 
     void saveOwner(OwnerRequest ownerRequest);
     List<OwnerResponse> getAllOwners();
-
-
     Owner findById(Owner ownerId);
 }

@@ -39,6 +39,6 @@ public class AdminRestController {
         }
 
         restauranteHandler.saveRestaurant(restaurantRequest, ownerRequest);
-        return ResponseEntity.ok("Restaurante creado exitosamente");
+        return ResponseEntity.ok("Restaurant created successfully");
     }
 }

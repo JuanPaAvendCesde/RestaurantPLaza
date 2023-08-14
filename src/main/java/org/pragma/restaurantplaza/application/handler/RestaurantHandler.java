@@ -19,13 +19,8 @@ public class RestaurantHandler implements IRestaurantHandler {
 
     private final IRestaurantServicePort restaurantServicePort;
     private final RestaurantRequestMapper restaurantRequestMapper;
-
     private final RestaurantResponseMapper restaurantResponseMapper;
-
     private final OwnerRequestMapper ownerRequestMapper;
-
-
-
 
     @Override
     public void saveRestaurant(RestaurantRequest restaurantRequest, OwnerRequest ownerRequest) {
@@ -33,8 +28,4 @@ public class RestaurantHandler implements IRestaurantHandler {
         Owner owner = ownerRequestMapper.toOwner(ownerRequest);
         restaurantServicePort.saveRestaurant(restaurant, owner);
     }
-
-
-
-
 }

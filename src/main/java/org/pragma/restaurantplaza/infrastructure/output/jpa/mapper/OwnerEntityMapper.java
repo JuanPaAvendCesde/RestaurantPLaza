@@ -12,8 +12,6 @@ unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
 
 public interface OwnerEntityMapper {
     OwnerEntity toOwnerEntity(Owner owner);
-
     Owner toOwner(OwnerEntity ownerEntity);
-
     List<Owner> toOwnerList(List<OwnerEntity> ownerEntityList);
 }

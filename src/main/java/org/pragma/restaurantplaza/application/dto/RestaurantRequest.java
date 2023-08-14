@@ -12,7 +12,6 @@ public class RestaurantRequest {
     private String nit;
     private String address;
     private String phone;
-
     private String urlLogo;
     private Owner ownerId;
 }

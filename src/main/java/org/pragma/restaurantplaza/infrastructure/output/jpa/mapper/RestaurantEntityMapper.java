@@ -13,7 +13,6 @@ unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
 public interface RestaurantEntityMapper {
 
     RestaurantEntity toRestaurantEntity(Restaurant restaurant);
-
     Owner toOwner(RestaurantEntity restaurantEntity);
 
     List<Restaurant> toRestaurantList(List<RestaurantEntity> restaurantEntityList);
