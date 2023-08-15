@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.spi.IMealPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.OwnerAlreadyExistException;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class MealAdapter implements IMealPersistencePort {
 
@@ -23,4 +27,16 @@ public class MealAdapter implements IMealPersistencePort {
 
 
     }
+
+    @Override
+    public void updateMeal(Long mealId, int newPrice, String newDescription) {
+        Optional<MealEntity> existingMeal = mealRepository.findById(mealId);
+        if (existingMeal.isPresent()) {
+            MealEntity mealEntity = existingMeal.get();
+            mealEntity.setPrice(newPrice);
+            mealEntity.setDescription(newDescription);
+            mealRepository.save(mealEntity);
+        }
+    }
+
 }
