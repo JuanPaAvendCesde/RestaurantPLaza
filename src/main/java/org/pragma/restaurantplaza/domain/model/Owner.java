@@ -1,8 +1,12 @@
 package org.pragma.restaurantplaza.domain.model;
 
 
+
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@NoArgsConstructor
 public class Owner {
 
     private Long id;
@@ -14,19 +18,7 @@ public class Owner {
     private String password;
     private String rol;
 
-    public Owner() {
-    }
 
-    public Owner(Long id, String name, int document, String phone, LocalDate birthdate, String email, String password, String rol) {
-        this.id = id;
-        this.name = name;
-        this.document = document;
-        this.phone = phone;
-        this.birthdate = birthdate;
-        this.email = email;
-        this.password = password;
-        this.rol = rol;
-    }
 
     public Long getId() {
         return id;
