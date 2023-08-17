@@ -36,5 +36,5 @@ public class RestaurantEntity {
     @NotBlank
     @OneToOne
     @JoinColumn(name = "id")
-    private OwnerEntity ownerId;
+    private UserEntity userId;
 }

@@ -2,8 +2,8 @@ package org.pragma.restaurantplaza.infrastructure.input.rest;
 
 import static org.mockito.Mockito.*;
 
-import org.pragma.restaurantplaza.application.dto.OwnerRequest;
-import org.pragma.restaurantplaza.application.handler.OwnerHandler;
+import org.pragma.restaurantplaza.application.dto.UserRequest;
+import org.pragma.restaurantplaza.application.handler.UserHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pragma.restaurantplaza.application.handler.RestaurantHandler;
@@ -18,76 +18,76 @@ import static org.mockito.Mockito.verify;
 class AdminRestControllerTest {
 
     private AdminRestController adminRestController;
-    private OwnerHandler ownerHandler;
+    private UserHandler ownerHandler;
     private RestaurantHandler RestaurantHandler;
 
     @BeforeEach
     void setUp() {
-        ownerHandler = mock(OwnerHandler.class);
+        ownerHandler = mock(UserHandler.class);
         adminRestController = new AdminRestController(ownerHandler, RestaurantHandler);
     }
 
     @Test
     void createOwnerWithValidRequest() {
 
-        OwnerRequest ownerRequest = new OwnerRequest();
+        UserRequest userRequest = new UserRequest();
 
 
 
-        ResponseEntity<String> response = adminRestController.saveOwner(ownerRequest);
+        ResponseEntity<String> response = adminRestController.saveOwner(userRequest);
 
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Owner created successfully", response.getBody());
-        verify(ownerHandler, times(1)).saveOwner(ownerRequest);
+        assertEquals("User created successfully", response.getBody());
+        verify(ownerHandler, times(1)).saveUser(userRequest);
     }
     @Test
     void createOwnerWithInvalidEmail() {
         // Arrange
-        OwnerRequest ownerRequest = new OwnerRequest();
-        ownerRequest.setName("John");
-        ownerRequest.setEmail("invalid-email");
+        UserRequest userRequest = new UserRequest();
+        userRequest.setName("John");
+        userRequest.setEmail("invalid-email");
 
 
         // Act
-        ResponseEntity<String> response = adminRestController.saveOwner(ownerRequest);
+        ResponseEntity<String> response = adminRestController.saveOwner(userRequest);
 
         // Assert
         assertEquals(400, response.getStatusCodeValue());
         assertNull(response.getBody());
-        verify(ownerHandler, never()).saveOwner(ownerRequest);
+        verify(ownerHandler, never()).saveUser(userRequest);
     }
     @Test
     void createOwnerWithInvalidPhoneNumber() {
         // Arrange
-        OwnerRequest ownerRequest = new OwnerRequest();
-        ownerRequest.setName("John");
-        ownerRequest.setPhone("+123456789012345"); // Número de teléfono demasiado largo
-        ownerRequest.setRol("Owner");
+        UserRequest userRequest = new UserRequest();
+        userRequest.setName("John");
+        userRequest.setPhone("+123456789012345"); // Número de teléfono demasiado largo
+        userRequest.setRol("User");
 
         // Act
-        ResponseEntity<String> response = adminRestController.saveOwner(ownerRequest);
+        ResponseEntity<String> response = adminRestController.saveOwner(userRequest);
 
         // Assert
         assertEquals(400, response.getStatusCodeValue());
         assertNull(response.getBody());
-        verify(ownerHandler, never()).saveOwner(ownerRequest);
+        verify(ownerHandler, never()).saveUser(userRequest);
     }
 
     @Test
     void createOwnerWithUnderageUser() {
         // Arrange
-        OwnerRequest ownerRequest = new OwnerRequest();
-        ownerRequest.setName("John");
-        ownerRequest.setBirthdate(LocalDate.now().minusYears(16)); // Menor de 18 años
-        ownerRequest.setRol("Owner");
+        UserRequest userRequest = new UserRequest();
+        userRequest.setName("John");
+        userRequest.setBirthdate(LocalDate.now().minusYears(16)); // Menor de 18 años
+        userRequest.setRol("User");
 
         // Act
-        ResponseEntity<String> response = adminRestController.saveOwner(ownerRequest);
+        ResponseEntity<String> response = adminRestController.saveOwner(userRequest);
 
         // Assert
         assertEquals(400, response.getStatusCodeValue());
         assertNull(response.getBody());
-        verify(ownerHandler, never()).saveOwner(ownerRequest);
+        verify(ownerHandler, never()).saveUser(userRequest);
     }
 }

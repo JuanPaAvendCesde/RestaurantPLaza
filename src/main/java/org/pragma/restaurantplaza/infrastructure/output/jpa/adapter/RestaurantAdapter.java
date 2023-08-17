@@ -1,7 +1,7 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import lombok.RequiredArgsConstructor;
-import org.pragma.restaurantplaza.domain.model.Owner;
+import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 
@@ -15,7 +15,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final RestaurantEntityMapper restaurantEntityMapper;
     @Override
-    public void saveRestaurant(Restaurant restaurant, Owner owner) {
+    public void saveRestaurant(Restaurant restaurant, User user) {
         if(restaurantRepository.findById(restaurant.getId()).isPresent() ) {
             throw new RestaurantAlreadyExistException("Restaurant already exists");
         }

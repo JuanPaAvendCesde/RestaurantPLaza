@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class OwnerResponse {
+public class UserRequest {
 
     private String name;
     private int document;

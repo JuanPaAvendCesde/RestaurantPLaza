@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pragma.restaurantplaza.domain.model.Meal;
-import org.pragma.restaurantplaza.infrastructure.exception.OwnerAlreadyExistException;
+import org.pragma.restaurantplaza.infrastructure.exception.UserAlreadyExistException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
@@ -53,7 +53,7 @@ class MealAdapterTest {
 
         when(mealRepository.findById(1L)).thenReturn(Optional.of(new MealEntity()));
 
-        assertThrows(OwnerAlreadyExistException.class, () -> mealAdapter.saveMeal(meal));
+        assertThrows(UserAlreadyExistException.class, () -> mealAdapter.saveMeal(meal));
         verify(mealRepository, times(1)).findById(1L);
         verifyNoMoreInteractions(mealEntityMapper);
         verifyNoMoreInteractions(mealRepository);

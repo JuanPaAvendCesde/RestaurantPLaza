@@ -10,19 +10,19 @@ public class Restaurant {
     private String phone;
 
     private String urlLogo;
-    private Owner ownerId;
+    private User userId;
 
     public Restaurant() {
     }
 
-    public Restaurant(Long id, String name, Integer nit, String address, String phone, String urlLogo, Owner ownerId) {
+    public Restaurant(Long id, String name, Integer nit, String address, String phone, String urlLogo, User userId) {
         this.id = id;
         this.name = name;
         this.nit = nit;
         this.address = address;
         this.phone = phone;
         this.urlLogo = urlLogo;
-        this.ownerId = ownerId;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -73,11 +73,11 @@ public class Restaurant {
         this.urlLogo = urlLogo;
     }
 
-    public Owner getOwnerId() {
-        return ownerId;
+    public User getOwnerId() {
+        return userId;
     }
 
-    public void setOwnerId(Owner ownerId) {
-        this.ownerId = ownerId;
+    public void setOwnerId(User userId) {
+        this.userId = userId;
     }
 }
