@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.handler.RestaurantHandler;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,18 +25,19 @@ public class AdminRestController {
     private final RestaurantHandler restauranteHandler;
 
     @PostMapping("/saveOwner")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String>saveOwner (@Valid @RequestBody UserRequest userRequest) {
-        userRequest.setRol("User");
+        userRequest.setRol("OWNER");
         userHandler.saveUser(userRequest);
-        return ResponseEntity.ok("User created successfully");
+        return ResponseEntity.ok("Owner created successfully");
     }
 
     @PostMapping("/saveRestaurant")
     public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest, UserRequest userRequest) {
         // Verificar que el propietario con el id proporcionado exista y tenga el rol de propietario
         User user = userHandler.findById(restaurantRequest.getUserId());
-        if (user == null || !"User".equals(user.getRol())) {
-            return ResponseEntity.badRequest().body(" is not an user");
+        if (user == null || !"OWNER".equals(user.getRol())) {
+            return ResponseEntity.badRequest().body(" is not an Owner");
         }
 
         restauranteHandler.saveRestaurant(restaurantRequest, userRequest);

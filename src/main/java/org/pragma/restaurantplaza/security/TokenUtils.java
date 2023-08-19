@@ -4,20 +4,27 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 
+import javax.crypto.SecretKey;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-@AllArgsConstructor
+
+
+
+
+
 public class TokenUtils {
 
-    static private final  String ACCESS_TOKEN_SECRET = "4g6sd45g6sd4g98d";
-    static private final  Long ACCESS_TOKEN_VALIDITY_SECONDS = 3600000L;
+    private static  final  String ACCESS_TOKEN_SECRET = "4g6sd45g6sd4g98d";
+    private static  final  Long ACCESS_TOKEN_VALIDITY_SECONDS = 3600000L;
 
+    private TokenUtils() {
+    }
 
     public static String createToken(String nombre, String email) {
         long expirationTime = ACCESS_TOKEN_VALIDITY_SECONDS * 1_000;
@@ -26,11 +33,13 @@ public class TokenUtils {
         Map<String, Object> extra = new HashMap<>();
         extra.put("nombre", nombre);
 
+        SecretKey key = Keys.hmacShaKeyFor(ACCESS_TOKEN_SECRET.getBytes());
+
         return Jwts.builder()
                 .setClaims(extra)
                 .setSubject(email)
                 .setExpiration(expitrationDate)
-                .signWith(SignatureAlgorithm.HS512, ACCESS_TOKEN_SECRET)
+                .signWith(key,SignatureAlgorithm.HS512)
                 .compact();
     }
 

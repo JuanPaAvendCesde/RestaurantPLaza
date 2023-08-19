@@ -11,7 +11,7 @@ import java.util.Collections;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails{
 
-    private final User user;
+    private transient User user;
 
 
 
