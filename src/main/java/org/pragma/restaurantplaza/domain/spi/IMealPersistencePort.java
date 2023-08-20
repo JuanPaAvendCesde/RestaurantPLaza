@@ -7,4 +7,6 @@ public interface IMealPersistencePort {
 
 
     void saveMeal(Meal meal);
+
+    void updateMeal(Long mealId, int newPrice, String newDescription);
 }

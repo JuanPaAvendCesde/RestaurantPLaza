@@ -58,4 +58,26 @@ class MealAdapterTest {
         verifyNoMoreInteractions(mealEntityMapper);
         verifyNoMoreInteractions(mealRepository);
     }
+
+    @Test
+    void updateMeal_SuccessfulUpdate() {
+        // Arrange
+        long mealId = 1L;
+        int newPrice = 12345;
+        String newDescription = "New description";
+
+        MealEntity existingMeal = new MealEntity();
+        existingMeal.setId(mealId);
+
+        when(mealRepository.findById(mealId)).thenReturn(Optional.of(existingMeal));
+
+        // Act
+        mealAdapter.updateMeal(mealId, newPrice, newDescription);
+
+        // Assert
+        verify(mealRepository, times(1)).findById(mealId);
+        verify(mealRepository, times(1)).save(existingMeal);
+        assertEquals(newPrice, existingMeal.getPrice());
+        assertEquals(newDescription, existingMeal.getDescription());
+    }
 }
