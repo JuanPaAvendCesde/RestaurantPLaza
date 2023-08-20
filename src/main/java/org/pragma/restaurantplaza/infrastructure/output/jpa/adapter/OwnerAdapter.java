@@ -57,4 +57,10 @@ public class OwnerAdapter implements IOwnerPersistencePort {
 
        return ownerEntityMapper.toOwnerList(ownerEntityList);
     }
+
+    @Override
+    public Owner findById(Owner ownerId) {
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId.getId()).orElseThrow();
+        return ownerEntityMapper.toOwner(ownerEntity);
+    }
 }

@@ -29,4 +29,10 @@ public class OwnerHandler implements IOwnerHandler{
     public List<OwnerResponse> getAllOwners() {
         return ownerResponseMapper.toResponseList(ownerServicePort.getAllOwners());
     }
+
+    @Override
+    public Owner findById(Owner ownerId) {
+        return ownerServicePort.findById(ownerId);
+    }
+
 }

@@ -23,4 +23,9 @@ public class OwnerUseCase implements IOwnerServicePort {
     public List<Owner> getAllOwners() {
         return ownerPersistencePort.getAllOwners();
     }
+
+    @Override
+    public Owner findById(Owner ownerId) {
+        return ownerPersistencePort.findById(ownerId);
+    }
 }
