@@ -1,22 +1,22 @@
 package org.pragma.restaurantplaza.infrastructure.configuration;
 
 import org.pragma.restaurantplaza.domain.api.IMealServicePort;
-import org.pragma.restaurantplaza.domain.api.IOwnerServicePort;
+import org.pragma.restaurantplaza.domain.api.IUserServicePort;
 import org.pragma.restaurantplaza.domain.api.IRestaurantServicePort;
 import org.pragma.restaurantplaza.domain.spi.IMealPersistencePort;
-import org.pragma.restaurantplaza.domain.spi.IOwnerPersistencePort;
+import org.pragma.restaurantplaza.domain.spi.IUserPersistencePort;
 import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 import org.pragma.restaurantplaza.domain.usecase.MealUseCase;
-import org.pragma.restaurantplaza.domain.usecase.OwnerUseCase;
+import org.pragma.restaurantplaza.domain.usecase.UserUseCase;
 import org.pragma.restaurantplaza.domain.usecase.RestaurantUseCase;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.MealAdapter;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OwnerAdapter;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.UserAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OwnerEntityMapper;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOwnerRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.springframework.context.annotation.Bean;
@@ -26,20 +26,20 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
-    private final IOwnerRepository ownerRepository;
-    private final OwnerEntityMapper ownerEntityMapper;
+    private final IUserRepository userRepository;
+    private final UserEntityMapper userEntityMapper;
     private final IRestaurantRepository restaurantRepository;
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
     private final MealEntityMapper mealEntityMapper;
 
     @Bean
-    public IOwnerPersistencePort ownerPersistencePort() {
-        return new OwnerAdapter(ownerRepository, ownerEntityMapper);
+    public IUserPersistencePort userPersistencePort() {
+        return new UserAdapter(userRepository, userEntityMapper);
     }
     @Bean
-    public IOwnerServicePort ownerServicePort() {
-    return new OwnerUseCase(ownerPersistencePort());
+    public IUserServicePort userServicePort() {
+    return new UserUseCase(userPersistencePort());
     }
 
     @Bean

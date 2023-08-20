@@ -1,7 +1,7 @@
 package org.pragma.restaurantplaza.application.mapper;
 
-import org.pragma.restaurantplaza.application.dto.OwnerRequest;
-import org.pragma.restaurantplaza.domain.model.Owner;
+import org.pragma.restaurantplaza.application.dto.UserRequest;
+import org.pragma.restaurantplaza.domain.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface OwnerRequestMapper {
-    Owner toOwner(OwnerRequest ownerRequest);
+    User toOwner(UserRequest userRequest);
 
 
 }

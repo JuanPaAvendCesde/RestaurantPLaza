@@ -34,8 +34,7 @@ public class RestaurantEntity {
     @NotBlank
     private String urlLogo;
     @NotBlank
-
     @OneToOne
-    @JoinColumn(name = "owner_id")  // Cambiado a owner_id
-    private OwnerEntity ownerId;
+    @JoinColumn(name = "id")
+    private UserEntity userId;
 }

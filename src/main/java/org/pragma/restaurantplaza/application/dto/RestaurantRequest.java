@@ -2,7 +2,7 @@ package org.pragma.restaurantplaza.application.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.pragma.restaurantplaza.domain.model.Owner;
+import org.pragma.restaurantplaza.domain.model.User;
 @Getter
 @Setter
 public class RestaurantRequest {
@@ -13,5 +13,5 @@ public class RestaurantRequest {
     private String address;
     private String phone;
     private String urlLogo;
-    private Owner ownerId;
+    private User userId;
 }

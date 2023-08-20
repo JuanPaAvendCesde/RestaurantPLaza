@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class OwnerEntity {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class OwnerEntity {
     private String phone;
     @NotBlank
     @Past
-    private LocalDate fechaNacimineto;
+    private LocalDate birthdate;
     @NotBlank
     @Email
     private String email;

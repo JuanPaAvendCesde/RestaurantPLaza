@@ -1,6 +1,7 @@
 package org.pragma.restaurantplaza.domain.usecase;
 
 import org.pragma.restaurantplaza.domain.api.IRestaurantServicePort;
+import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 
@@ -13,8 +14,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public void saveRestaurant(Restaurant restaurant) {
-        restaurantPersistencePort.saveRestaurant(restaurant);
+    public void saveRestaurant(Restaurant restaurant, User user) {
+        restaurantPersistencePort.saveRestaurant(restaurant, user);
 
     }
 }

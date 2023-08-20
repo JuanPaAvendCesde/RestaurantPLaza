@@ -1,13 +1,11 @@
 package org.pragma.restaurantplaza.domain.model;
 
 
-
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
-
-@NoArgsConstructor
-public class Owner {
+@AllArgsConstructor
+public class User {
 
     private Long id;
     private String name;
@@ -17,6 +15,8 @@ public class Owner {
     private String email;
     private String password;
     private String rol;
+
+
 
 
 
