@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface IMealRepository extends JpaRepository<MealEntity, Long> {
 
 
-    Page<MealEntity> findByRestaurantIdAndCategory(RestaurantEntity restaurant, String category, Pageable pageable);
+    Page<MealEntity> findByRestaurantIdAndCategory(String name,String category, Pageable pageable);
 
     Page<MealEntity> findByRestaurantId(RestaurantEntity restaurant, Pageable pageable);
 }

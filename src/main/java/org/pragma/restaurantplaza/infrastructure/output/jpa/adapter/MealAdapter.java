@@ -1,6 +1,7 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.pragma.restaurantplaza.application.dto.MealResponse;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IMealPersistencePort;
@@ -11,6 +12,8 @@ import org.pragma.restaurantplaza.infrastructure.exception.UserAlreadyExistExcep
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 
@@ -65,5 +68,14 @@ public class MealAdapter implements IMealPersistencePort {
         MealEntity mealEntity = existingMeal.get();
         mealEntity.setActive(active);
         mealRepository.save(mealEntity);
+    }
+
+    public Page<MealResponse> getRestaurantMenuByCategory( String name, String category, int page, int size) {
+        Page<MealEntity> mealEntityPage = mealRepository.findByRestaurantIdAndCategory( name,category, PageRequest.of(page, size));
+        return mealEntityPage.map(this::mapToMealResponse);
+    }
+
+    private MealResponse mapToMealResponse(MealEntity mealEntity) {
+        return new MealResponse();
     }
 }

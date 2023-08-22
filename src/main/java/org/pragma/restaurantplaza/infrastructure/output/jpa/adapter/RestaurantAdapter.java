@@ -12,10 +12,12 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEnt
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
+    private final IRestaurantPersistencePort restaurantPersistencePort;
 
     @Override
     public void saveRestaurant(Restaurant restaurant, User user) {
@@ -71,25 +74,43 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
         return true;
     }
 
-    public List<Restaurant> findAll(PageRequest pageRequest) {
-        return restaurantEntityMapper.toRestaurantList(restaurantRepository.findAll(pageRequest).getContent());
-    }
 
-    public Page<MealResponse> getRestaurantMenuByCategory(Long restaurantId, String category, int page, int size) {
+
+    public Page<MealResponse> getRestaurantMenuByCategory(Long restaurantId,String name, String category, int page, int size) {
         RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
 
         Pageable pageable = PageRequest.of(page, size);
         Page<MealEntity> mealPage;
         if (category != null) {
-            mealPage = mealRepository.findByRestaurantIdAndCategory(restaurant, category, pageable);
+            mealPage = mealRepository.findByRestaurantIdAndCategory(name,category, pageable);
         } else {
             mealPage = mealRepository.findByRestaurantId(restaurant, pageable);
         }
         return mealPage.map(this::mapToMealResponse);
     }
 
+    @Override
+    public Page<Restaurant> findAll(Pageable pageable) {
+        Page<RestaurantEntity> restaurantEntityPage = restaurantRepository.findAll(pageable);
+
+        List<Restaurant> restaurantList = restaurantEntityPage.getContent().stream()
+                .map(this::mapToRestaurant)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(restaurantList, pageable, restaurantEntityPage.getTotalElements());
+    }
+
+    private Restaurant mapToRestaurant(RestaurantEntity restaurantEntity) {
+        User user = new User( restaurantEntity.getUserId().getId(), restaurantEntity.getUserId().getName(), restaurantEntity.getUserId().getDocument(), restaurantEntity.getUserId().getPhone(), restaurantEntity.getUserId().getBirthdate(), restaurantEntity.getUserId().getEmail(), restaurantEntity.getUserId().getPassword(), restaurantEntity.getUserId().getRole());
+        Restaurant restaurant = new Restaurant( restaurantEntity.getId(), restaurantEntity.getName(), restaurantEntity.getNit(), restaurantEntity.getUrlLogo(), restaurantEntity.getPhone(), restaurantEntity.getAddress(), user, null);
+        return restaurant;
+    }
+
+
     private MealResponse mapToMealResponse(MealEntity mealEntity) {
         return new MealResponse();
     }
+
+
 }

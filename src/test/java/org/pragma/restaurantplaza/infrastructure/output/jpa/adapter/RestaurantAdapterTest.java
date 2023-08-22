@@ -4,15 +4,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pragma.restaurantplaza.application.dto.MealResponse;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
+import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,13 +39,15 @@ class RestaurantAdapterTest {
 
     @Mock
     private IMealRepository mealRepository;
+    @Mock
+    private IRestaurantPersistencePort restaurantPersistencePort;
 
     private RestaurantAdapter restaurantAdapter;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository);
+        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository, restaurantPersistencePort);
     }
 
     @Test
@@ -124,4 +137,54 @@ class RestaurantAdapterTest {
         assertEquals("Restaurant name cannot consist of only numbers", exception.getMessage());
         verify(restaurantRepository, times(1)).findById(1L);
     }
+    @Test
+    void getRestaurantMenuByCategory_ValidCategory_ReturnsPageOfMealResponses() {
+        IRestaurantRepository restaurantRepository = mock(IRestaurantRepository.class);
+        IMealRepository mealRepository = mock(IMealRepository.class);
+        MealEntityMapper mealEntityMapper = mock(MealEntityMapper.class);
+
+        MealAdapter mealAdapter = new MealAdapter(mealRepository, mealEntityMapper);
+
+        Long restaurantId = 1L;
+        String category = "Main Course";
+        String name = "Restaurant";
+        int page = 0;
+        int size = 10;
+
+        RestaurantEntity restaurant = new RestaurantEntity();
+        restaurant.setId(restaurantId);
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+
+        List<MealEntity> mealEntities = new ArrayList<>();
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MealEntity> mealPage = new PageImpl<>(mealEntities);
+        when(mealRepository.findByRestaurantIdAndCategory(name,category, pageable)).thenReturn(mealPage);
+
+
+        Page<MealResponse> result = mealAdapter.getRestaurantMenuByCategory(name,category, page, size);
+    }
+
+    @Test
+        void testFindAll_ReturnsPageOfRestaurants() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<RestaurantEntity> restaurantEntities = new ArrayList<>();
+        restaurantEntities.add(new RestaurantEntity( 1L, "name", 213123, "newsdealer", "+573005698325", "", new UserEntity(), null));
+
+        restaurantEntities.add(new RestaurantEntity( 2L, "name", 213123, "newsdealer", "+573005698325", "", new UserEntity(), null));
+
+
+        Page<RestaurantEntity> restaurantEntityPage = new PageImpl<>(restaurantEntities, pageable, restaurantEntities.size());
+
+        when(restaurantRepository.findAll(pageable)).thenReturn(restaurantEntityPage);
+
+        Page<Restaurant> result = restaurantAdapter.findAll(pageable);
+
+        assertEquals(restaurantEntities.size(), result.getContent().size());
+
+    }
+
+
+
 }

@@ -40,10 +40,7 @@ public class UserAdapter implements IUserPersistencePort {
         if (!isNumeric(user.getDocument())) {
             throw new InvalidDocumentException("Invalid document format");
         }
-        if ("Client".equals(user.getRole())) {
 
-            userRepository.save(userEntityMapper.toUserEntity(user));
-        }
         String passEncrypted = passWithBcrypt(user.getPassword());
         user.setPassword(passEncrypted);
         userRepository.save(userEntityMapper.toUserEntity(user));

@@ -32,6 +32,7 @@ public class BeanConfiguration {
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
     private final MealEntityMapper mealEntityMapper;
+    private final IRestaurantPersistencePort restaurantPersistencePort;
 
 
     @Bean
@@ -46,7 +47,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository);
+        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,restaurantPersistencePort);
     }
 
     @Bean

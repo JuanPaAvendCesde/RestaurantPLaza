@@ -9,12 +9,13 @@ import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/client")
@@ -34,31 +35,33 @@ public class ClientRestController {
     }
 
     @GetMapping("/allRestaurants")
-    public List<RestaurantResponse> getAllRestaurants(
+    public Page<RestaurantResponse> getAllRestaurants(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<Restaurant> restaurantPage = (Page<Restaurant>) restaurantAdapter.findAll(PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
 
-        return restaurantPage.getContent()
-                .stream()
-                .map(this::mapToRestaurantResponse)
-                .toList();
+        Page<Restaurant> restaurantPage = restaurantAdapter.findAll(pageable);
+
+        return restaurantPage.map(this::mapToRestaurantResponse);
     }
+
     private RestaurantResponse mapToRestaurantResponse(Restaurant restaurant) {
-        return new RestaurantResponse(restaurant.getName(),restaurant.getUrlLogo());
+        return new RestaurantResponse(restaurant.getName(), restaurant.getUrlLogo());
     }
+
 
 
 
     @GetMapping("/{restaurantId}/menu")
     public Page<MealResponse> getRestaurantMenu(
             @PathVariable Long restaurantId,
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return restaurantAdapter.getRestaurantMenuByCategory(restaurantId, category, page, size);
+        return restaurantAdapter.getRestaurantMenuByCategory(restaurantId,name, category, page, size);
     }
 
 }
