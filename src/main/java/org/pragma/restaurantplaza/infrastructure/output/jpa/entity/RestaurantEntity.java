@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "restaurant")
@@ -18,6 +19,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class RestaurantEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,14 +29,17 @@ public class RestaurantEntity {
     private Integer nit;
     @NotBlank
     private String address;
-    @NotBlank
     @Size(max = 13)
     @Pattern(regexp = "[0-9+]")
+    @NotBlank
     private String phone;
     @NotBlank
     private String urlLogo;
     @NotBlank
-    @OneToOne
-    @JoinColumn(name = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
     private UserEntity userId;
+    @OneToMany(mappedBy = "restaurantId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealEntity> meals;
+
 }

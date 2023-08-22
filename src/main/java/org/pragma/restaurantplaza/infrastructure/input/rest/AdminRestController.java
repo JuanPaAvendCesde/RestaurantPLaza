@@ -1,10 +1,10 @@
 package org.pragma.restaurantplaza.infrastructure.input.rest;
 
-import org.pragma.restaurantplaza.application.dto.UserRequest;
-import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
-import org.pragma.restaurantplaza.application.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
+import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
+import org.pragma.restaurantplaza.application.dto.UserRequest;
 import org.pragma.restaurantplaza.application.handler.RestaurantHandler;
+import org.pragma.restaurantplaza.application.handler.UserHandler;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,25 +22,25 @@ public class AdminRestController {
 
     private final UserHandler userHandler;
 
-    private final RestaurantHandler restauranteHandler;
+    private final RestaurantHandler restaurantHandler;
 
     @PostMapping("/saveOwner")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String>saveOwner (@Valid @RequestBody UserRequest userRequest) {
-        userRequest.setRol("OWNER");
+    public ResponseEntity<String> saveOwner(@Valid @RequestBody UserRequest userRequest) {
+        userRequest.setRole("OWNER");
         userHandler.saveUser(userRequest);
         return ResponseEntity.ok("Owner created successfully");
     }
 
     @PostMapping("/saveRestaurant")
-    public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest, UserRequest userRequest) {
-        // Verificar que el propietario con el id proporcionado exista y tenga el rol de propietario
-        User user = userHandler.findById(restaurantRequest.getUserId());
-        if (user == null || !"OWNER".equals(user.getRol())) {
-            return ResponseEntity.badRequest().body(" is not an Owner");
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest, @RequestBody UserRequest userRequest) {
 
-        restauranteHandler.saveRestaurant(restaurantRequest, userRequest);
+        User user = userHandler.findById(restaurantRequest.getUserId());
+        if (user == null || !"OWNER".equals(user.getRole())) {
+            return ResponseEntity.badRequest().body("User is not an Owner");
+        }
+        restaurantHandler.saveRestaurant(restaurantRequest, userRequest);
         return ResponseEntity.ok("Restaurant created successfully");
     }
 }

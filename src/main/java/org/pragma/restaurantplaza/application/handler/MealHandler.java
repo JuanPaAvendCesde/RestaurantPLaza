@@ -2,9 +2,12 @@ package org.pragma.restaurantplaza.application.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.MealRequest;
-import org.pragma.restaurantplaza.application.mapper.MealResquestMapper;
+import org.pragma.restaurantplaza.application.dto.UserRequest;
+import org.pragma.restaurantplaza.application.mapper.MealRequestMapper;
+import org.pragma.restaurantplaza.application.mapper.OwnerRequestMapper;
 import org.pragma.restaurantplaza.domain.api.IMealServicePort;
 import org.pragma.restaurantplaza.domain.model.Meal;
+import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.MealAdapter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,26 +15,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MealHandler implements IMealHandler{
-
+public class MealHandler implements IMealHandler {
 
     private final IMealServicePort mealServicePort;
 
-    private final MealResquestMapper mealRequestMapper;
-
-    private final MealResquestMapper mealResquestMapper;
+    private final MealRequestMapper mealRequestMapper;
 
     private final MealAdapter mealAdapter;
 
+    private final OwnerRequestMapper ownerRequestMapper;
 
 
     @Override
-    public void saveMeal(MealRequest mealRequest) {
-        Meal meal = mealResquestMapper.toMeal(mealRequest);
-        mealServicePort.saveMeal(meal);
+    public void saveMeal(MealRequest mealRequest, UserRequest userRequest) {
+        Meal meal = mealRequestMapper.toMeal(mealRequest);
+        User user = ownerRequestMapper.toOwner(userRequest);
+        mealServicePort.saveMeal(meal, user);
     }
 
     public void updateMeal(Long mealId, int newPrice, String newDescription) {
         mealAdapter.updateMeal(mealId, newPrice, newDescription);
+    }
+
+
+    public boolean changeMealStatus(boolean active) {
+        return active;
     }
 }

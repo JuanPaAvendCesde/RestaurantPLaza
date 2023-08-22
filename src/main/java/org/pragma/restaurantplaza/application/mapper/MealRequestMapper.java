@@ -5,11 +5,10 @@ import org.mapstruct.ReportingPolicy;
 import org.pragma.restaurantplaza.application.dto.MealRequest;
 import org.pragma.restaurantplaza.domain.model.Meal;
 
-
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface MealResquestMapper {
+public interface MealRequestMapper {
 
-   Meal toMeal(MealRequest mealRequest);
+    Meal toMeal(MealRequest mealRequest);
 }

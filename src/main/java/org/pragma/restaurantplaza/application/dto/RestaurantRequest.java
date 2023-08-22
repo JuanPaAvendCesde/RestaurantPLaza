@@ -3,10 +3,10 @@ package org.pragma.restaurantplaza.application.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.pragma.restaurantplaza.domain.model.User;
+
 @Getter
 @Setter
 public class RestaurantRequest {
-
 
     private String name;
     private String nit;

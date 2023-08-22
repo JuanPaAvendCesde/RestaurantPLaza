@@ -5,9 +5,8 @@ import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 
 @Mapper(componentModel = "spring",
-unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
-        unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE )
+        unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
+        unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface RestaurantRequestMapper {
-
     Restaurant toRestaurant(RestaurantRequest restaurantRequest);
 }
