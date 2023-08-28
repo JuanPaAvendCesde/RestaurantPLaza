@@ -17,6 +17,7 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMap
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,8 @@ public class BeanConfiguration {
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
     private final MealEntityMapper mealEntityMapper;
+    private final IOrderRepository orderRepository;
+
 
 
 
@@ -47,7 +50,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository);
+        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository);
     }
 
     @Bean

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.MealRequest;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
 import org.pragma.restaurantplaza.application.mapper.MealRequestMapper;
-import org.pragma.restaurantplaza.application.mapper.OwnerRequestMapper;
+import org.pragma.restaurantplaza.application.mapper.UserRequestMapper;
 import org.pragma.restaurantplaza.domain.api.IMealServicePort;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.model.User;
@@ -23,13 +23,13 @@ public class MealHandler implements IMealHandler {
 
     private final MealAdapter mealAdapter;
 
-    private final OwnerRequestMapper ownerRequestMapper;
+    private final UserRequestMapper userRequestMapper;
 
 
     @Override
     public void saveMeal(MealRequest mealRequest, UserRequest userRequest) {
         Meal meal = mealRequestMapper.toMeal(mealRequest);
-        User user = ownerRequestMapper.toOwner(userRequest);
+        User user = userRequestMapper.toOwner(userRequest);
         mealServicePort.saveMeal(meal, user);
     }
 

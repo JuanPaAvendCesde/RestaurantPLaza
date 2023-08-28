@@ -3,7 +3,7 @@ package org.pragma.restaurantplaza.application.handler;
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
-import org.pragma.restaurantplaza.application.mapper.OwnerRequestMapper;
+import org.pragma.restaurantplaza.application.mapper.UserRequestMapper;
 import org.pragma.restaurantplaza.application.mapper.RestaurantRequestMapper;
 import org.pragma.restaurantplaza.domain.api.IRestaurantServicePort;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
@@ -19,12 +19,12 @@ public class RestaurantHandler implements IRestaurantHandler {
     private final IRestaurantServicePort restaurantServicePort;
     private final RestaurantRequestMapper restaurantRequestMapper;
 
-    private final OwnerRequestMapper ownerRequestMapper;
+    private final UserRequestMapper userRequestMapper;
 
     @Override
     public void saveRestaurant(RestaurantRequest restaurantRequest, UserRequest userRequest) {
         Restaurant restaurant = restaurantRequestMapper.toRestaurant(restaurantRequest);
-        User user = ownerRequestMapper.toOwner(userRequest);
+        User user = userRequestMapper.toOwner(userRequest);
         restaurantServicePort.saveRestaurant(restaurant, user);
     }
 }

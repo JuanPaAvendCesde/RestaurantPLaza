@@ -2,6 +2,8 @@ package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.MealResponse;
+import org.pragma.restaurantplaza.domain.model.Order;
+import org.pragma.restaurantplaza.domain.model.OrderStatus;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
@@ -10,6 +12,7 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +29,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
+    private final IOrderRepository orderRepository;
 
 
     @Override
@@ -111,5 +115,9 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
         return new MealResponse();
     }
 
+
+    public Page<Order> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable) {
+        return orderRepository.findByOrderStatusAndRestaurant(state, restaurant, pageable);
+    }
 
 }

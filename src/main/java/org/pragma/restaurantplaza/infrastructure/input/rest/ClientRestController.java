@@ -92,7 +92,7 @@ public class ClientRestController {
         return restaurantAdapter.getRestaurantMenuByCategory(restaurantId,name, category, page, size);
     }
 
-    @PostMapping("/createClient")
+    @PostMapping("/create_Order")
     @Operation(summary = "Create a new order",
             description = "Place a new order for a client.",
             responses = {
@@ -111,5 +111,7 @@ public class ClientRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
+
+
 
 }

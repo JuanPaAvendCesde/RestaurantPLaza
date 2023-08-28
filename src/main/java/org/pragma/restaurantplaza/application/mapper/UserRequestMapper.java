@@ -8,7 +8,7 @@ import org.pragma.restaurantplaza.domain.model.User;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface OwnerRequestMapper {
+public interface UserRequestMapper {
     User toOwner(UserRequest userRequest);
 
 

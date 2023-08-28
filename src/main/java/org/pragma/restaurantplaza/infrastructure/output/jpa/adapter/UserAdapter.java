@@ -1,6 +1,7 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IUserPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
@@ -62,6 +63,12 @@ public class UserAdapter implements IUserPersistencePort {
     public User findById(User userId) {
         UserEntity userEntity = userRepository.findById(userId.getId()).orElseThrow();
         return userEntityMapper.toUser(userEntity);
+    }
+
+    @Override
+    public Restaurant getEmployeeRestaurant(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        return userEntityMapper.toRestaurant(userEntity);
     }
 
 

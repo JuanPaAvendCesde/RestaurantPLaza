@@ -1,6 +1,7 @@
 package org.pragma.restaurantplaza.domain.usecase;
 
 import org.pragma.restaurantplaza.domain.api.IUserServicePort;
+import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IUserPersistencePort;
 
@@ -18,6 +19,11 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public User findById(User userId) {
         return userPersistencePort.findById(userId);
+    }
+
+    @Override
+    public Restaurant getEmployeeRestaurant(Long id) {
+        return userPersistencePort.getEmployeeRestaurant(id);
     }
 
 
