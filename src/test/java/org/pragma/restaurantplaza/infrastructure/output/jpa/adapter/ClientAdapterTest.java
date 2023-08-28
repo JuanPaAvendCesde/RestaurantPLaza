@@ -2,16 +2,25 @@ package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pragma.restaurantplaza.domain.model.User;
+import org.pragma.restaurantplaza.application.dto.OrderRequest;
+import org.pragma.restaurantplaza.domain.model.*;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,12 +34,75 @@ class ClientAdapterTest {
     private UserEntityMapper userEntityMapper;
 
     private UserAdapter userAdapter;
+    @Mock
+    private IOrderRepository orderRepository;
+
+
+    @Mock
+    private IMealRepository mealRepository;
+
+    @Mock
+    private OrderEntityMapper orderEntityMapper;
+
+    @Mock
+    private MealEntityMapper mealEntityMapper;
+
+    @InjectMocks
+    private OrderAdapter orderAdapter;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
         userAdapter = new UserAdapter(userRepository, userEntityMapper);
     }
+
+
+
+    @Test
+     void testCreateOrder_Success() {
+        // Mocking user data
+        UserEntity clientEntity = new UserEntity();
+        when(userRepository.findById(any())).thenReturn(java.util.Optional.of(clientEntity));
+
+        // Mocking meal data
+        List<MealEntity> selectedMealEntities = new ArrayList<>();
+        when(mealRepository.findAllById(anyCollection())).thenReturn(selectedMealEntities);
+
+        // Mocking order data
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setId(1L);
+        orderRequest.setUser(new User(1L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT"));
+        orderRequest.setRestaurant(new Restaurant(1L, "Restaurant", 12345, "Address", "123456789", "urlLogo", new User(2L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT"), null));
+
+        List<Long> selectedMealIds = Arrays.asList(1L, 2L, 3L);
+
+        // Fetch the actual MealEntity objects using the mealRepository and the list of IDs
+        List<MealEntity> selectedMeals = mealRepository.findAllById(selectedMealIds);
+
+        orderRequest.setMeals(selectedMeals); // Corrección aquí
+
+        orderRequest.setQuantity(2);
+
+        // Mocking order entity conversion
+        OrderStatus orderStatus = OrderStatus.PENDING;
+        OrderEntity orderEntity = new OrderEntity();
+        when(orderEntityMapper.toOrderEntity(any())).thenReturn(orderEntity);
+
+        // Perform the test
+        orderAdapter.createOrder(orderRequest);
+
+        // Verify the interactions
+        verify(orderRepository).save(orderEntity);
+    }
+
+
+
+
+
+
+
+
 
     @Test
     void saveClient_SuccessfulCreation() {

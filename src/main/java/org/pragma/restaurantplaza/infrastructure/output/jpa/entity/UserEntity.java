@@ -42,6 +42,8 @@ public class UserEntity {
     private String password;
     @NotBlank
     private String role;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderEntity> orders;
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RestaurantEntity> ownedRestaurants;
 }

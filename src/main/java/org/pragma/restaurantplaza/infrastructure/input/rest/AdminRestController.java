@@ -1,5 +1,9 @@
 package org.pragma.restaurantplaza.infrastructure.input.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
@@ -17,6 +21,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin", description = "Admin operations")
 @RequiredArgsConstructor
 public class AdminRestController {
 
@@ -26,6 +31,13 @@ public class AdminRestController {
 
     @PostMapping("/saveOwner")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new owner",
+            description = "This endpoint allows an admin to create a new owner.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Owner created successfully"),
+                    @ApiResponse(responseCode = "403", description = "Access denied"),
+                    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+            })
     public ResponseEntity<String> saveOwner(@Valid @RequestBody UserRequest userRequest) {
         userRequest.setRole("OWNER");
         userHandler.saveUser(userRequest);
@@ -34,6 +46,13 @@ public class AdminRestController {
 
     @PostMapping("/saveRestaurant")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new restaurant",
+            description = "This endpoint allows an admin to create a new restaurant.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Restaurant created successfully"),
+                    @ApiResponse(responseCode = "403", description = "Access denied"),
+                    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+            })
     public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest, @RequestBody UserRequest userRequest) {
 
         User user = userHandler.findById(restaurantRequest.getUserId());

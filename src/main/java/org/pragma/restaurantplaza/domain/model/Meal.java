@@ -1,8 +1,6 @@
 package org.pragma.restaurantplaza.domain.model;
 
-import lombok.Getter;
 
-@Getter
 public class Meal {
 
     private Long id;
@@ -30,5 +28,31 @@ public class Meal {
         this.name = name;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUrlImage() {
+        return urlImage;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public Restaurant getRestaurantId() {
+        return restaurantId;
+    }
 }

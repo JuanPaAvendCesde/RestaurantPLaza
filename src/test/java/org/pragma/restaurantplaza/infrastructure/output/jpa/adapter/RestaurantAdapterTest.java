@@ -39,15 +39,14 @@ class RestaurantAdapterTest {
 
     @Mock
     private IMealRepository mealRepository;
-    @Mock
-    private IRestaurantPersistencePort restaurantPersistencePort;
+
 
     private RestaurantAdapter restaurantAdapter;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository, restaurantPersistencePort);
+        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository);
     }
 
     @Test
@@ -159,10 +158,10 @@ class RestaurantAdapterTest {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<MealEntity> mealPage = new PageImpl<>(mealEntities);
-        when(mealRepository.findByRestaurantIdAndCategory(name,category, pageable)).thenReturn(mealPage);
+        when(mealRepository.findByRestaurantIdAndCategory(restaurant,category, pageable)).thenReturn(mealPage);
 
 
-        Page<MealResponse> result = mealAdapter.getRestaurantMenuByCategory(name,category, page, size);
+        Page<MealResponse> result = mealAdapter.getRestaurantMenuByCategory(restaurant,category, page, size);
     }
 
     @Test

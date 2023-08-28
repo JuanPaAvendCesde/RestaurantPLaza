@@ -26,7 +26,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
-    private final IRestaurantPersistencePort restaurantPersistencePort;
+
 
     @Override
     public void saveRestaurant(Restaurant restaurant, User user) {
@@ -83,14 +83,14 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
         Pageable pageable = PageRequest.of(page, size);
         Page<MealEntity> mealPage;
         if (category != null) {
-            mealPage = mealRepository.findByRestaurantIdAndCategory(name,category, pageable);
+            mealPage = mealRepository.findByRestaurantIdAndCategory(restaurant,category, pageable);
         } else {
             mealPage = mealRepository.findByRestaurantId(restaurant, pageable);
         }
         return mealPage.map(this::mapToMealResponse);
     }
 
-    @Override
+
     public Page<Restaurant> findAll(Pageable pageable) {
         Page<RestaurantEntity> restaurantEntityPage = restaurantRepository.findAll(pageable);
 
@@ -103,8 +103,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
 
     private Restaurant mapToRestaurant(RestaurantEntity restaurantEntity) {
         User user = new User( restaurantEntity.getUserId().getId(), restaurantEntity.getUserId().getName(), restaurantEntity.getUserId().getDocument(), restaurantEntity.getUserId().getPhone(), restaurantEntity.getUserId().getBirthdate(), restaurantEntity.getUserId().getEmail(), restaurantEntity.getUserId().getPassword(), restaurantEntity.getUserId().getRole());
-        Restaurant restaurant = new Restaurant( restaurantEntity.getId(), restaurantEntity.getName(), restaurantEntity.getNit(), restaurantEntity.getUrlLogo(), restaurantEntity.getPhone(), restaurantEntity.getAddress(), user, null);
-        return restaurant;
+        return new Restaurant( restaurantEntity.getId(), restaurantEntity.getName(), restaurantEntity.getNit(), restaurantEntity.getUrlLogo(), restaurantEntity.getPhone(), restaurantEntity.getAddress(), user, restaurantEntity.getMeals());
     }
 
 

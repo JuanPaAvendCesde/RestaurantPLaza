@@ -10,6 +10,7 @@ import org.pragma.restaurantplaza.infrastructure.exception.InvalidUserRoleExcept
 import org.pragma.restaurantplaza.infrastructure.exception.MealNotFoundException;
 import org.pragma.restaurantplaza.infrastructure.exception.UserAlreadyExistException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.springframework.data.domain.Page;
@@ -70,8 +71,8 @@ public class MealAdapter implements IMealPersistencePort {
         mealRepository.save(mealEntity);
     }
 
-    public Page<MealResponse> getRestaurantMenuByCategory( String name, String category, int page, int size) {
-        Page<MealEntity> mealEntityPage = mealRepository.findByRestaurantIdAndCategory( name,category, PageRequest.of(page, size));
+    public Page<MealResponse> getRestaurantMenuByCategory(RestaurantEntity restaurant, String category, int page, int size) {
+        Page<MealEntity> mealEntityPage = mealRepository.findByRestaurantIdAndCategory( restaurant,category, PageRequest.of(page, size));
         return mealEntityPage.map(this::mapToMealResponse);
     }
 

@@ -28,6 +28,11 @@ public class MealEntity {
     private String urlImage;
     @Column
     private String category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meals") // Cambiar el nombre si es diferente
+    private OrderEntity meals;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurantId")
     private RestaurantEntity restaurantId;
