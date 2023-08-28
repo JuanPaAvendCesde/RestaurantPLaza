@@ -40,6 +40,8 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    private Long assignedEmployeeId;
+
     @Column
     private int quantity;
 }

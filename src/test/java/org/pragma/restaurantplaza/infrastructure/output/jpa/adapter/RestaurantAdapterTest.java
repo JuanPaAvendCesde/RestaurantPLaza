@@ -17,6 +17,7 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEnt
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +46,9 @@ class RestaurantAdapterTest {
     private IOrderRepository orderRepository;
 
     @Mock
+    private IUserRepository userRepository;
+
+    @Mock
     private OrderHandler orderHandler;
 
     private RestaurantAdapter restaurantAdapter;
@@ -52,7 +56,7 @@ class RestaurantAdapterTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository);
+        restaurantAdapter = new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository,userRepository);
     }
 
     @Test
@@ -192,26 +196,26 @@ class RestaurantAdapterTest {
 
     @Test
     void testGetOrdersByStateAndRestaurant() {
-        // Mocking data
+
         Restaurant restaurant = new Restaurant(1L, "name", 213123, "newsdealer", "+573005698325", "", null, null);
         OrderStatus state = OrderStatus.PENDING;
         Pageable pageable = Pageable.ofSize(10).withPage(0);
         MealEntity meal = new MealEntity();
         List<OrderResponse> orders = new ArrayList<>();
-        orders.add(new OrderResponse(/* Initialize with necessary data */));
-        // Add more orders as needed
+        orders.add(new OrderResponse(1L, new User( 1L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT" ), restaurant, List.of(meal), state, 1L, 1));
+
 
         Page<OrderResponse> ordersPage = new PageImpl<>(orders, pageable, orders.size());
 
-        // Mocking behavior of orderHandler to return Page<OrderResponse>
+
         when(orderHandler.getOrdersByStateAndRestaurant(state, restaurant, pageable)).thenReturn(ordersPage);
 
-        // Call the method being tested
+
         Page<OrderResponse> result = orderHandler.getOrdersByStateAndRestaurant(state, restaurant, pageable);
 
-        // Assertions
+
         assertEquals(ordersPage.getTotalElements(), result.getTotalElements());
-        // Perform additional assertions based on your expected data
+
     }
 
 

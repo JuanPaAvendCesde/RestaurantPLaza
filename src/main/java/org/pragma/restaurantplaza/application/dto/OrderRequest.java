@@ -21,6 +21,16 @@ public class OrderRequest {
     private List<MealEntity> meals;
 
     private OrderStatus orderStatus;
-
+    private Long assignedEmployeeId;
     private int quantity;
+
+    public OrderRequest(Long id, User user, Restaurant restaurant, List<MealEntity> meals, OrderStatus orderStatus, Long assignedEmployeeId, int quantity) {
+        this.id = id;
+        this.user = user;
+        this.restaurant = restaurant;
+        this.meals = meals;
+        this.orderStatus = orderStatus;
+        this.assignedEmployeeId = assignedEmployeeId;
+        this.quantity = quantity;
+    }
 }

@@ -10,10 +10,12 @@ import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
     private final IOrderRepository orderRepository;
+    private final IUserRepository userRepository;
 
 
     @Override
@@ -118,6 +121,16 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
 
     public Page<Order> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable) {
         return orderRepository.findByOrderStatusAndRestaurant(state, restaurant, pageable);
+    }
+
+    public Page<Order> getAssignedOrdersByStateAndRestaurant(OrderStatus state, Long employeeId, Long restaurantId, Pageable pageable) {
+        UserEntity user = userRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
+
+        return orderRepository.findByOrderStatusAndAssignedEmployeeIdAndRestaurant(state, employeeId, restaurant, pageable);
     }
 
 }

@@ -15,7 +15,7 @@ public class Order {
     private List<MealEntity> meals;
 
     private OrderStatus orderStatus;
-
+    private Long assignedEmployeeId;
     private int quantity;
 
     public Order(Long id, User user, Restaurant restaurant, List<MealEntity> meal, OrderStatus orderStatus, int quantity) {
@@ -51,7 +51,7 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public List<MealEntity> getMeals() {
+    public List<MealEntity> getMeals(List<Long> mealIds) {
         return meals;
     }
 
@@ -69,6 +69,14 @@ public class Order {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public Long getAssignedEmployeeId() {
+        return assignedEmployeeId;
+    }
+
+    public void setAssignedEmployeeId(Long assignedEmployeeId) {
+        this.assignedEmployeeId = assignedEmployeeId;
     }
 
     public void setQuantity(int quantity) {

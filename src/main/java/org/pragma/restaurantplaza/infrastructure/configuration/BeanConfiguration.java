@@ -50,7 +50,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository);
+        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository,userRepository);
     }
 
     @Bean

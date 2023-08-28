@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -61,4 +62,15 @@ public class EmployeeRestController {
 
         return ResponseEntity.ok(ordersPage);
     }
+    @GetMapping("/assigned_order")
+    public ResponseEntity<Page<OrderResponse>> getAssignedOrdersByStateAndRestaurant(
+            @RequestParam OrderStatus state,
+            @RequestParam Long employeeId,
+            @RequestParam Long restaurantId,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<OrderResponse> orders = orderHandler.getAssignedOrdersByStateAndRestaurant(state, employeeId, restaurantId, pageable);
+        return ResponseEntity.ok(orders);
+    }
+
+
 }
