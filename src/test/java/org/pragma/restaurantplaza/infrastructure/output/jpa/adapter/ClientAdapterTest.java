@@ -11,16 +11,13 @@ import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
-
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,8 +41,6 @@ class ClientAdapterTest {
     @Mock
     private OrderEntityMapper orderEntityMapper;
 
-    @Mock
-    private MealEntityMapper mealEntityMapper;
 
     @InjectMocks
     private OrderAdapter orderAdapter;
@@ -53,7 +48,6 @@ class ClientAdapterTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        MockitoAnnotations.initMocks(this);
         userAdapter = new UserAdapter(userRepository, userEntityMapper);
     }
 
@@ -80,7 +74,7 @@ class ClientAdapterTest {
         // Fetch the actual MealEntity objects using the mealRepository and the list of IDs
         List<MealEntity> selectedMeals = mealRepository.findAllById(selectedMealIds);
 
-        orderRequest.setMeals(selectedMeals); // Corrección aquí
+        orderRequest.setMeals(selectedMeals);
 
         orderRequest.setQuantity(2);
 

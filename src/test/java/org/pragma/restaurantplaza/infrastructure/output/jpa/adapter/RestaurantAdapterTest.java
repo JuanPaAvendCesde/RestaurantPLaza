@@ -7,7 +7,6 @@ import org.mockito.MockitoAnnotations;
 import org.pragma.restaurantplaza.application.dto.MealResponse;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
-import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;

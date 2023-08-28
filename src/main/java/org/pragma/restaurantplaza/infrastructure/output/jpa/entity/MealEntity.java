@@ -30,7 +30,7 @@ public class MealEntity {
     private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meals") // Cambiar el nombre si es diferente
+    @JoinColumn(name = "meals")
     private OrderEntity meals;
 
     @ManyToOne(fetch = FetchType.LAZY)

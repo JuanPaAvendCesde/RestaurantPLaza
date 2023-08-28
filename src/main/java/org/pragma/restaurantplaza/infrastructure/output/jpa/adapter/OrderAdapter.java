@@ -12,7 +12,6 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.stereotype.Service;
@@ -25,23 +24,19 @@ public class OrderAdapter implements IOrderPersistencePort {
     private final IOrderRepository orderRepository;
     private final OrderEntityMapper orderEntityMapper;
     private final IUserRepository userRepository;
-    private final IMealRepository mealRepository;
     private final MealEntityMapper mealEntityMapper;
     private List<Meal> selectedMeals;
 
     @Override
     public void createOrder(OrderRequest orderRequest) {
-        // Obtener el cliente que realiza el pedido
         UserEntity client = userRepository.findById(orderRequest.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
 
-        // Obtener el menú de un restaurante específico (usando el restaurante en orderRequest)
         List<MealEntity> selectedMealEntities = selectedMeals.stream()
                 .map(mealEntityMapper::toMealEntity)
                 .collect(Collectors.toList());
         Order order = getOrder(orderRequest, client, selectedMealEntities);
 
-        // Guardar el pedido en la base de datos
         orderRepository.save(orderEntityMapper.toOrderEntity(order));
     }
 
@@ -53,7 +48,7 @@ public class OrderAdapter implements IOrderPersistencePort {
         order.setRestaurant(orderRequest.getRestaurant());
         order.setMeals(orderRequest.getMeals());
         order.setQuantity(orderRequest.getQuantity());
-        order.setOrderStatus(OrderStatus.PENDING); // Estado inicial del pedido
+        order.setOrderStatus(OrderStatus.PENDING);
         return order;
     }
 }

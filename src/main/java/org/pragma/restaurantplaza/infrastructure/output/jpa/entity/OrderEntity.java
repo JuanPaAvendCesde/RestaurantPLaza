@@ -22,11 +22,11 @@ public class OrderEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id") // Nombre de la columna que establece la relación
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id") // Nombre de la columna que establece la relación
+    @JoinColumn(name = "restaurant_id")
     private RestaurantEntity restaurant;
 
     @ManyToMany
