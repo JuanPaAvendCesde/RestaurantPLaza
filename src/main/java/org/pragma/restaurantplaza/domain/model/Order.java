@@ -1,9 +1,11 @@
 package org.pragma.restaurantplaza.domain.model;
 
+import lombok.AllArgsConstructor;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
+@AllArgsConstructor
 public class Order {
 
     private Long id;
@@ -20,16 +22,10 @@ public class Order {
 
     private String securityPin;
 
-    public Order(Long id, User user, Restaurant restaurant, List<MealEntity> meals, OrderStatus orderStatus, Long assignedEmployeeId, int quantity, String securityPin) {
-        this.id = id;
-        this.user = user;
-        this.restaurant = restaurant;
-        this.meals = meals;
-        this.orderStatus = orderStatus;
-        this.assignedEmployeeId = assignedEmployeeId;
-        this.quantity = quantity;
-        this.securityPin = securityPin;
-    }
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
+
+
 
     public Long getId() {
         return id;
@@ -97,5 +93,22 @@ public class Order {
 
     public void setSecurityPin(String securityPin) {
         this.securityPin = securityPin;
+    }
+
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 }

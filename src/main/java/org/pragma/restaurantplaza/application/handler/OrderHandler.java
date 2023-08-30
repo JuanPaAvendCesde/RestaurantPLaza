@@ -60,7 +60,9 @@ public class OrderHandler implements IOrderHandler{
                 order.getOrderStatus(),
                 assignedEmployeeId,
                 order.getQuantity(),
-                order.getSecurityPin()
+                order.getSecurityPin(),
+                order.getCreateAt(),
+                order.getUpdateAt()
         );
     }
 

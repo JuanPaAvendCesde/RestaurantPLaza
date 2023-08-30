@@ -8,6 +8,7 @@ import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -26,6 +27,8 @@ public class OrderResponse {
     private Long assignedEmployeeId;
     private int quantity;
     private String securityPin;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
 
 }

@@ -5,6 +5,8 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.OrderRequest;
+import org.pragma.restaurantplaza.application.dto.OrderResponse;
+import org.pragma.restaurantplaza.application.dto.UserResponse;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.model.Order;
 import org.pragma.restaurantplaza.domain.model.OrderStatus;
@@ -22,6 +24,9 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRep
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -51,13 +56,14 @@ public class OrderAdapter implements IOrderPersistencePort {
         orderRepository.save(orderEntityMapper.toOrderEntity(order));
 
         sendOrderNotification(user, "1234", orderRequest);
+        createStatusLog(orderRequest);
 
     }
 
     private static Order getOrder(OrderRequest orderRequest, UserEntity client, List<MealEntity> selectedMealEntities) {
         User user = new User(client.getId(), client.getName(), client.getDocument(), client.getPhone(), client.getBirthdate(), client.getEmail(),  client.getRole(), client.getPassword());
 
-        Order order = new Order(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getAssignedEmployeeId(), orderRequest.getQuantity(),orderRequest.getSecurityPin());
+        Order order = new Order(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getAssignedEmployeeId(), orderRequest.getQuantity(),orderRequest.getSecurityPin(), orderRequest.getCreateAt(), orderRequest.getUpdateAt());
         order.setUser(user);
         order.setRestaurant(orderRequest.getRestaurant());
         order.setMeals(orderRequest.getMeals());
@@ -102,6 +108,7 @@ public class OrderAdapter implements IOrderPersistencePort {
             orderRequest.setOrderStatus(OrderStatus.DELIVERED);
             UserEntity user = userEntityMapper.toUserEntity(orderRequest.getUser());
             sendOrderNotification( user,providedPin, orderRequest);
+            createStatusLog(orderRequest);
         } else {
             throw new InvalidStateException("No se puede marcar como entregado");
         }
@@ -115,8 +122,61 @@ public class OrderAdapter implements IOrderPersistencePort {
     public void cancelOrder(OrderRequest orderRequest) {
         if (orderRequest.getOrderStatus() == OrderStatus.PENDING) {
             orderRequest.setOrderStatus(OrderStatus.CANCELED);
+            createStatusLog(orderRequest);
         } else {
             throw new InvalidStateException("No se puede cancelar el pedido");
         }
     }
+
+    public void createStatusLog(OrderRequest orderRequest) {
+        OrderEntity log = new OrderEntity();
+        log.setOrderStatus(orderRequest.getOrderStatus());
+        log.setTimestamp(LocalDateTime.now());
+        orderRepository.save(log);
+
+    }
+
+   /* public List<OrderResponse> calculateOrderEfficiency() {
+        List<OrderEntity> orders = orderRepository.findAll();
+        List<OrderResponse> orderEfficiencyList = new ArrayList<>();
+
+        for (OrderEntity orderEntity : orders) {
+            LocalDateTime startTime = orderEntity.getCreateAt();
+            LocalDateTime endTime = orderEntity.getUpdateAt();
+
+            long timeDifference = ChronoUnit.MINUTES.between(startTime, endTime);
+
+            OrderResponse orderEfficiency = new OrderResponse(orderEntity.getId(), startTime, endTime, timeDifference);
+            orderEfficiencyList.add(orderEfficiency);
+        }
+
+        return orderEfficiencyList;
+    }
+
+    public List<UserResponse> calculateEmployeeEfficiency() {
+        List<UserEntity> employees = userRepository.findByRole("EMPLOYEE");
+        List<UserResponse> employeeEfficiencyList = new ArrayList<>();
+
+        for (UserEntity employee : employees) {
+            List<OrderEntity> ordersHandledByEmployee = orderRepository.findByAssignedEmployeeIdAndOrderStatus(employee.getId(), OrderStatus.DELIVERED);
+
+            long totalDuration = 0;
+            int totalOrdersHandled = ordersHandledByEmployee.size();
+
+            for (OrderEntity orderEntity : ordersHandledByEmployee) {
+                LocalDateTime startTime = orderEntity.getCreatedAt();
+                LocalDateTime endTime = orderEntity.getUpdatedAt();
+
+                totalDuration += ChronoUnit.MINUTES.between(startTime, endTime);
+            }
+
+            if (totalOrdersHandled > 0) {
+                long averageDuration = totalDuration / totalOrdersHandled;
+                UserResponse employeeEfficiency = new UserResponse(employee.getId(), employee.getName(), averageDuration);
+                employeeEfficiencyList.add(employeeEfficiency);
+            }
+        }
+
+        return employeeEfficiencyList;
+    }*/
 }

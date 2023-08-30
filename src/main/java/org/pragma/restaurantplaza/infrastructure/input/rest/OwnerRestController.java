@@ -6,16 +6,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.pragma.restaurantplaza.application.dto.MealRequest;
+import org.pragma.restaurantplaza.application.dto.OrderResponse;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
+import org.pragma.restaurantplaza.application.dto.UserResponse;
 import org.pragma.restaurantplaza.application.handler.MealHandler;
 import org.pragma.restaurantplaza.application.handler.UserHandler;
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidUserRoleException;
 import org.pragma.restaurantplaza.infrastructure.exception.MealNotFoundException;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class OwnerRestController {
     private final MealHandler mealHandler;
     private final UserHandler userHandler;
+    private final OrderAdapter orderAdapter;
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('OWNER')and #restaurantOwnerId == authentication.principal.id")
@@ -99,6 +105,31 @@ public class OwnerRestController {
         } catch (InvalidUserRoleException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid user role");
         }
+    }
+    @GetMapping("/orderEfficiency")
+    @Operation(summary = "Get order efficiency",
+            description = "Retrieve order efficiency statistics.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful retrieval of order efficiency"),
+                    @ApiResponse(responseCode = "403", description = "Access denied"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
+    public ResponseEntity<List<OrderResponse>> getOrderEfficiency() {
+        List<OrderResponse> orderEfficiencyList = orderAdapter.calculateOrderEfficiency();
+        return ResponseEntity.ok(orderEfficiencyList);
+    }
+
+    @GetMapping("/employeeEfficiency")
+    @Operation(summary = "Get employee efficiency",
+            description = "Retrieve employee efficiency statistics.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful retrieval of employee efficiency"),
+                    @ApiResponse(responseCode = "403", description = "Access denied"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
+    public ResponseEntity<List<UserResponse>> getEmployeeEfficiency() {
+        List<UserResponse> employeeEfficiencyList = orderAdapter.calculateEmployeeEfficiency();
+        return ResponseEntity.ok(employeeEfficiencyList);
     }
 
 }

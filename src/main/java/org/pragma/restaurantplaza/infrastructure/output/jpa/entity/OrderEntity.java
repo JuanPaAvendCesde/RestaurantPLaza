@@ -8,6 +8,7 @@ import org.pragma.restaurantplaza.domain.model.OrderStatus;
 
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -45,5 +46,10 @@ public class OrderEntity {
     @Column
     private int quantity;
     private String securityPin;
+
+    private LocalDateTime timestamp;
+
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
 }

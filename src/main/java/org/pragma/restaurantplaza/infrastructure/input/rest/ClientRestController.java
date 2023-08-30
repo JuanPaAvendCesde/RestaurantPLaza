@@ -14,6 +14,7 @@ import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundExcepti
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/client")
@@ -131,6 +133,8 @@ public class ClientRestController {
             return ResponseEntity.badRequest().body("No se puede cancelar el pedido");
         }
     }
+
+
     }
 
 
