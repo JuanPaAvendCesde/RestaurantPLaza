@@ -8,8 +8,10 @@ import org.pragma.restaurantplaza.application.dto.OrderRequest;
 import org.pragma.restaurantplaza.application.dto.RestaurantResponse;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
 import org.pragma.restaurantplaza.application.handler.UserHandler;
+import org.pragma.restaurantplaza.domain.model.Order;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundException;
+import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,8 @@ public class ClientRestController {
     private final RestaurantAdapter restaurantAdapter;
 
     private final OrderAdapter orderAdapter;
+
+
 
 
 
@@ -114,4 +118,21 @@ public class ClientRestController {
 
 
 
-}
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId,OrderRequest orderRequest) {
+        Order order = orderAdapter.getOrderById(orderId);
+
+        orderRequest.setId(order.getId()); // Set the order ID
+
+        try {
+            orderAdapter.cancelOrder(orderRequest);
+            return ResponseEntity.ok("Pedido cancelado exitosamente");
+        } catch (InvalidStateException e) {
+            return ResponseEntity.badRequest().body("No se puede cancelar el pedido");
+        }
+    }
+    }
+
+
+
+

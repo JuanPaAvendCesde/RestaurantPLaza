@@ -202,7 +202,7 @@ class RestaurantAdapterTest {
         Pageable pageable = Pageable.ofSize(10).withPage(0);
         MealEntity meal = new MealEntity();
         List<OrderResponse> orders = new ArrayList<>();
-        orders.add(new OrderResponse(1L, new User( 1L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT" ), restaurant, List.of(meal), state, 1L, 1));
+        orders.add(new OrderResponse(1L, new User( 1L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT" ), restaurant, List.of(meal), state, 1L, 1, "1234"));
 
 
         Page<OrderResponse> ordersPage = new PageImpl<>(orders, pageable, orders.size());

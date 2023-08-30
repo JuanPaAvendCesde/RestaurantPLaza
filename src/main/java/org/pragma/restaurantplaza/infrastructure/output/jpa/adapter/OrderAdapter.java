@@ -13,6 +13,7 @@ import org.pragma.restaurantplaza.domain.spi.IOrderPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundException;
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
@@ -103,6 +104,19 @@ public class OrderAdapter implements IOrderPersistencePort {
             sendOrderNotification( user,providedPin, orderRequest);
         } else {
             throw new InvalidStateException("No se puede marcar como entregado");
+        }
+    }
+
+    public Order getOrderById(Long orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow();
+        return orderEntityMapper.toOrder(orderEntity);
+    }
+
+    public void cancelOrder(OrderRequest orderRequest) {
+        if (orderRequest.getOrderStatus() == OrderStatus.PENDING) {
+            orderRequest.setOrderStatus(OrderStatus.CANCELED);
+        } else {
+            throw new InvalidStateException("No se puede cancelar el pedido");
         }
     }
 }

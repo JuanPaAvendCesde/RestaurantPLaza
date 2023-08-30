@@ -92,7 +92,7 @@ class ClientAdapterTest {
         List<MealEntity> selectedMeals = mealRepository.findAllById(selectedMealIds);
 
 
-        OrderRequest orderRequest = new OrderRequest( 1L, new User(1L, "user", 3265326, "+573226094632", LocalDate.of(2015, 8, 20), "aa@aa.com", "12334", "CLIENT" ),new Restaurant(1L, "name", 213123, "rewarded", "+573005698325", "",new User(1L, "user", 3265326, "+573226094632", LocalDate.of(2015, 8, 20), "aa@aa.com", "12334", "Owner" ), selectedMealEntities ), selectedMealEntities, OrderStatus.PENDING, 2L,1);
+        OrderRequest orderRequest = new OrderRequest( 1L, new User(1L, "user", 3265326, "+573226094632", LocalDate.of(2015, 8, 20), "aa@aa.com", "12334", "CLIENT" ),new Restaurant(1L, "name", 213123, "rewarded", "+573005698325", "",new User(1L, "user", 3265326, "+573226094632", LocalDate.of(2015, 8, 20), "aa@aa.com", "12334", "Owner" ), selectedMealEntities ), selectedMealEntities, OrderStatus.PENDING, 2L,1, "1234");
         orderRequest.setId(1L);
         orderRequest.setUser(new User(1L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT"));
         orderRequest.setRestaurant(new Restaurant(1L, "Restaurant", 12345, "Address", "123456789", "urlLogo", new User(2L, "user", 3265326, "+573226094632", LocalDate.of(1995, 8, 20), "aa@aa.com", "12334", "CLIENT"), null));
