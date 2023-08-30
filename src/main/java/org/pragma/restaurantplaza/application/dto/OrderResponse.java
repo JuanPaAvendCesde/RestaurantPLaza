@@ -1,5 +1,6 @@
 package org.pragma.restaurantplaza.application.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.pragma.restaurantplaza.domain.model.OrderStatus;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-
+@AllArgsConstructor
 public class OrderResponse {
     private Long id;
 
@@ -24,14 +25,7 @@ public class OrderResponse {
     private OrderStatus orderStatus;
     private Long assignedEmployeeId;
     private int quantity;
+    private String securityPin;
 
-    public OrderResponse(Long id, User user, Restaurant restaurant, List<MealEntity> meals, OrderStatus orderStatus, Long assignedEmployeeId, int quantity) {
-        this.id = id;
-        this.user = user;
-        this.restaurant = restaurant;
-        this.meals = meals;
-        this.orderStatus = orderStatus;
-        this.assignedEmployeeId = assignedEmployeeId;
-        this.quantity = quantity;
-    }
+
 }

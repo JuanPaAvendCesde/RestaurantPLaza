@@ -44,4 +44,6 @@ public class OrderEntity {
 
     @Column
     private int quantity;
+    private String securityPin;
+
 }

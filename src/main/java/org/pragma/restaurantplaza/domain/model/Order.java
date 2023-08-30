@@ -18,13 +18,17 @@ public class Order {
     private Long assignedEmployeeId;
     private int quantity;
 
-    public Order(Long id, User user, Restaurant restaurant, List<MealEntity> meal, OrderStatus orderStatus, int quantity) {
+    private String securityPin;
+
+    public Order(Long id, User user, Restaurant restaurant, List<MealEntity> meals, OrderStatus orderStatus, Long assignedEmployeeId, int quantity, String securityPin) {
         this.id = id;
         this.user = user;
         this.restaurant = restaurant;
-        this.meals = meal;
+        this.meals = meals;
         this.orderStatus = orderStatus;
+        this.assignedEmployeeId = assignedEmployeeId;
         this.quantity = quantity;
+        this.securityPin = securityPin;
     }
 
     public Long getId() {
@@ -81,5 +85,17 @@ public class Order {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public List<MealEntity> getMeals() {
+        return meals;
+    }
+
+    public String getSecurityPin() {
+        return securityPin;
+    }
+
+    public void setSecurityPin(String securityPin) {
+        this.securityPin = securityPin;
     }
 }

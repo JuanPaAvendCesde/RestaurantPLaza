@@ -59,7 +59,8 @@ public class OrderHandler implements IOrderHandler{
                 order.getMeals(mealIds),
                 order.getOrderStatus(),
                 assignedEmployeeId,
-                order.getQuantity()
+                order.getQuantity(),
+                order.getSecurityPin()
         );
     }
 

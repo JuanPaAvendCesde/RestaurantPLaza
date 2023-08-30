@@ -11,10 +11,12 @@ import org.pragma.restaurantplaza.domain.model.OrderStatus;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IOrderPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundException;
+import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class OrderAdapter implements IOrderPersistencePort {
     private final OrderEntityMapper orderEntityMapper;
     private final IUserRepository userRepository;
     private final MealEntityMapper mealEntityMapper;
+    private final UserEntityMapper userEntityMapper;
     private List<Meal> selectedMeals;
 
     @Override
@@ -53,7 +56,7 @@ public class OrderAdapter implements IOrderPersistencePort {
     private static Order getOrder(OrderRequest orderRequest, UserEntity client, List<MealEntity> selectedMealEntities) {
         User user = new User(client.getId(), client.getName(), client.getDocument(), client.getPhone(), client.getBirthdate(), client.getEmail(),  client.getRole(), client.getPassword());
 
-        Order order = new Order(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getQuantity());
+        Order order = new Order(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getAssignedEmployeeId(), orderRequest.getQuantity(),orderRequest.getSecurityPin());
         order.setUser(user);
         order.setRestaurant(orderRequest.getRestaurant());
         order.setMeals(orderRequest.getMeals());
@@ -91,5 +94,15 @@ public class OrderAdapter implements IOrderPersistencePort {
 
        System.out.println("Mensaje SID: " + message.getSid());
 
+    }
+
+    public void markAsDelivered(String providedPin,OrderRequest orderRequest){
+        if (orderRequest.getOrderStatus() == OrderStatus.READY && providedPin.equals(orderRequest.getSecurityPin())) {
+            orderRequest.setOrderStatus(OrderStatus.DELIVERED);
+            UserEntity user = userEntityMapper.toUserEntity(orderRequest.getUser());
+            sendOrderNotification( user,providedPin, orderRequest);
+        } else {
+            throw new InvalidStateException("No se puede marcar como entregado");
+        }
     }
 }
