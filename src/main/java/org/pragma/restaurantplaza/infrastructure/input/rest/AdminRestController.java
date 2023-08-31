@@ -9,7 +9,6 @@ import org.pragma.restaurantplaza.application.dto.RestaurantRequest;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
 import org.pragma.restaurantplaza.application.handler.RestaurantHandler;
 import org.pragma.restaurantplaza.application.handler.UserHandler;
-import org.pragma.restaurantplaza.domain.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +28,7 @@ public class AdminRestController {
 
     private final RestaurantHandler restaurantHandler;
 
+
     @PostMapping("/saveOwner")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new owner",
@@ -44,7 +44,7 @@ public class AdminRestController {
         return ResponseEntity.ok("Owner created successfully");
     }
 
-    @PostMapping("/saveRestaurant")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new restaurant",
             description = "This endpoint allows an admin to create a new restaurant.",
@@ -54,12 +54,10 @@ public class AdminRestController {
                     @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
             })
     public ResponseEntity<String> saveRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest, @RequestBody UserRequest userRequest) {
-
-        User user = userHandler.findById(restaurantRequest.getUserId());
-        if (user == null || !"OWNER".equals(user.getRole())) {
-            return ResponseEntity.badRequest().body("User is not an Owner");
-        }
-        restaurantHandler.saveRestaurant(restaurantRequest, userRequest);
-        return ResponseEntity.ok("Restaurant created successfully");
+            restaurantHandler.saveRestaurant(restaurantRequest, userRequest);
+            return ResponseEntity.ok("Restaurant created successfully");
     }
+
+
+
 }

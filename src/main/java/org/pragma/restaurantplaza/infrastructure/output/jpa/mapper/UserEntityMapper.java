@@ -1,6 +1,7 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
@@ -16,7 +17,12 @@ public interface UserEntityMapper {
 
     User toUser(UserEntity userEntity);
 
-    List<User> toUserList(List<UserEntity> userEntityList);
 
     Restaurant toRestaurant(UserEntity userEntity);
+
+
+    List<User> toUserList(List<UserEntity> userEntityList);
+
+    @Named("toUserResponse")
+    User toUserResponse(UserEntity userEntity);
 }

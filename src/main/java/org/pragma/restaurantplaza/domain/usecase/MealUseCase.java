@@ -6,13 +6,13 @@ import org.pragma.restaurantplaza.domain.model.User;
 import org.pragma.restaurantplaza.domain.spi.IMealPersistencePort;
 
 public class MealUseCase implements IMealServicePort {
-    private final IMealPersistencePort mealPersistencePor;
+    private final IMealPersistencePort mealPersistencePort;
 
     public MealUseCase(IMealPersistencePort mealPersistencePor) {
-        this.mealPersistencePor = mealPersistencePor;
+        this.mealPersistencePort = mealPersistencePor;
     }
     @Override
     public void saveMeal(Meal meal, User user) {
-        mealPersistencePor.saveMeal(meal, user);
+        mealPersistencePort.saveMeal(meal, user);
     }
 }

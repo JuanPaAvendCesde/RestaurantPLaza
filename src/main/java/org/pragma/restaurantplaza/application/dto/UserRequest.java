@@ -1,5 +1,6 @@
 package org.pragma.restaurantplaza.application.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UserRequest {
     private Long id;
     private String name;

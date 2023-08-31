@@ -25,6 +25,7 @@ public class Order {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
+    private Long estimatedTime;
 
 
     public Long getId() {
@@ -49,10 +50,6 @@ public class Order {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
-    }
-
-    public List<MealEntity> getMeals(List<Long> mealIds) {
-        return meals;
     }
 
     public void setMeals(List<MealEntity> meals) {
@@ -110,5 +107,9 @@ public class Order {
 
     public void setUpdateAt(LocalDateTime updateAt) {
         this.updateAt = updateAt;
+    }
+
+    public Long getEstimatedTime() {
+        return estimatedTime;
     }
 }

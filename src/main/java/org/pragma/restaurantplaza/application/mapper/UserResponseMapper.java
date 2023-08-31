@@ -8,7 +8,7 @@ import org.mapstruct.ReportingPolicy;
 unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 
-public interface OwnerResponseMapper {
+public interface UserResponseMapper {
 
 
 

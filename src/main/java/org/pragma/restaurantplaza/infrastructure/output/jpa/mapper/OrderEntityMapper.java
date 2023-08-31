@@ -9,6 +9,5 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
         unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface OrderEntityMapper {
     OrderEntity toOrderEntity(Order order);
-
     Order toOrder(OrderEntity orderEntity);
 }

@@ -9,7 +9,6 @@ import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,7 +23,7 @@ public class UserAdapter implements IUserPersistencePort {
     @Override
     public void saveUser(User user) {
 
-        if (!isValidEmail(user.getEmail())) {
+       if (!isValidEmail(user.getEmail())) {
             throw new InvalidEmailException("Invalid email format");
         }
         if (!isValidPhoneNumber(user.getPhone())) {
@@ -72,7 +71,7 @@ public class UserAdapter implements IUserPersistencePort {
     }
 
 
-    private boolean isValidPhoneNumber(String phoneNumber) {
+ private boolean isValidPhoneNumber(String phoneNumber) {
 
         if (phoneNumber.length() > 13) {
             return false;
@@ -100,4 +99,16 @@ public class UserAdapter implements IUserPersistencePort {
     }
 
 
+    public User mapToUser(UserEntity userEntity) {
+        return new User(
+                userEntity.getId(),
+                userEntity.getName(),
+                userEntity.getDocument(),
+                userEntity.getPhone(),
+                userEntity.getBirthdate(),
+                userEntity.getEmail(),
+                userEntity.getRole(),
+                userEntity.getPassword()
+        );
+    }
 }

@@ -18,15 +18,15 @@ public class MealEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+
     private String name;
-    @Column
+
     private int price;
-    @Column
+
     private String description;
-    @Column
+
     private String urlImage;
-    @Column
+
     private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)

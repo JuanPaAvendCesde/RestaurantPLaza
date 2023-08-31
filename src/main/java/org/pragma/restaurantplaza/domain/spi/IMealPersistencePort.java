@@ -12,4 +12,5 @@ public interface IMealPersistencePort {
     void updateMeal(Long mealId, int newPrice, String newDescription);
 
 
+    void changeMealStatus(Long mealId, boolean active);
 }

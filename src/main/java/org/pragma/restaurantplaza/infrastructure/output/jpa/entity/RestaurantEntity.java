@@ -42,4 +42,5 @@ public class RestaurantEntity {
     @OneToMany(mappedBy = "restaurantId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealEntity> meals;
 
+
 }

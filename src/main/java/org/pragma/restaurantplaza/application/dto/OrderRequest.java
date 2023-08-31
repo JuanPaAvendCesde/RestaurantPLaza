@@ -29,6 +29,7 @@ public class OrderRequest {
     private String securityPin;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private long estimatedTime;
 
 
 }

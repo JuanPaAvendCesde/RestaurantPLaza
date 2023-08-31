@@ -57,7 +57,7 @@ public class MealAdapter implements IMealPersistencePort {
         mealEntity.setDescription(newDescription);
         mealRepository.save(mealEntity);
     }
-
+    @Override
     public void changeMealStatus(Long mealId, boolean active) {
         Optional<MealEntity> existingMeal = mealRepository.findById(mealId);
         if (existingMeal.isEmpty()) {
@@ -77,6 +77,6 @@ public class MealAdapter implements IMealPersistencePort {
     }
 
     private MealResponse mapToMealResponse(MealEntity mealEntity) {
-        return new MealResponse();
+        return new MealResponse(  mealEntity.getName(), mealEntity.getPrice(),mealEntity.getDescription(), mealEntity.getUrlImage(), mealEntity.getCategory());
     }
 }

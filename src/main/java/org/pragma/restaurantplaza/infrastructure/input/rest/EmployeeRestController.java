@@ -10,6 +10,8 @@ import org.pragma.restaurantplaza.application.handler.OrderHandler;
 import org.pragma.restaurantplaza.application.handler.UserHandler;
 import org.pragma.restaurantplaza.domain.model.OrderStatus;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
+import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Positive;
@@ -35,8 +35,10 @@ public class EmployeeRestController {
 
     private final OrderHandler orderHandler;
     private final UserHandler userHandler;
+    private final OrderAdapter orderAdapter;
 
     @GetMapping("/orders_by_state")
+    @PreAuthorize("hasRole('Employee')")
     @Operation(summary = "Get orders by state",
             description = "Retrieve a paginated list of orders based on their state, filtered for the current restaurant's employee.",
             responses = {
@@ -50,7 +52,7 @@ public class EmployeeRestController {
             @RequestParam(defaultValue = "10") @Positive int size,
             Authentication authentication) {
 
-        // Validate employee's access to restaurant
+
         UserRequest user = (UserRequest) authentication.getPrincipal();
         Restaurant restaurant = userHandler.getEmployeeRestaurant(user.getId());
         if (restaurant == null) {
@@ -63,6 +65,7 @@ public class EmployeeRestController {
         return ResponseEntity.ok(ordersPage);
     }
     @GetMapping("/assigned_order")
+    @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<Page<OrderResponse>> getAssignedOrdersByStateAndRestaurant(
             @RequestParam OrderStatus state,
             @RequestParam Long employeeId,
@@ -71,6 +74,30 @@ public class EmployeeRestController {
         Page<OrderResponse> orders = orderHandler.getAssignedOrdersByStateAndRestaurant(state, employeeId, restaurantId, pageable);
         return ResponseEntity.ok(orders);
     }
+
+
+    @PostMapping("/{orderId}/markAsDelivered")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Mark an order as delivered",
+            description = "This endpoint allows an owner to mark an order as delivered.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Order marked as delivered"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Access denied"),
+                    @ApiResponse(responseCode = "404", description = "Order not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
+    public ResponseEntity<String> markOrderAsDelivered(
+            @PathVariable Long orderId,
+            @RequestParam String providedPin) {
+        try {
+            orderAdapter.markOrderAsDelivered(providedPin, orderId);
+            return ResponseEntity.ok("Order marked as delivered");
+        } catch (InvalidStateException e) {
+            return ResponseEntity.badRequest().body("Unable to mark order as delivered");
+        }
+    }
+
 
 
 }

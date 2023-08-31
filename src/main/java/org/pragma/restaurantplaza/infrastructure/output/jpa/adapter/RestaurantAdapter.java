@@ -10,19 +10,17 @@ import org.pragma.restaurantplaza.domain.spi.IRestaurantPersistencePort;
 import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 
 @RequiredArgsConstructor
@@ -32,7 +30,9 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final RestaurantEntityMapper restaurantEntityMapper;
     private final IMealRepository mealRepository;
     private final IOrderRepository orderRepository;
-    private final IUserRepository userRepository;
+
+
+    String restaurantNotFound = "Restaurant not found";
 
 
     @Override
@@ -54,10 +54,10 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
         }
         restaurantRepository.save(restaurantEntityMapper.toRestaurantEntity(restaurant));
     }
-
+    @Override
     public List<MealResponse> getRestaurantMenu(Long restaurantId) {
         RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantNotFound));
         List<MealResponse> mealResponses = new ArrayList<>();
         for (MealEntity meal : restaurant.getMeals()) {
             mealResponses.add(mapToMealResponse(meal));
@@ -82,10 +82,10 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     }
 
 
-
+@Override
     public Page<MealResponse> getRestaurantMenuByCategory(Long restaurantId,String name, String category, int page, int size) {
         RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantNotFound));
 
         Pageable pageable = PageRequest.of(page, size);
         Page<MealEntity> mealPage;
@@ -97,13 +97,13 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
         return mealPage.map(this::mapToMealResponse);
     }
 
-
+@Override
     public Page<Restaurant> findAll(Pageable pageable) {
         Page<RestaurantEntity> restaurantEntityPage = restaurantRepository.findAll(pageable);
 
         List<Restaurant> restaurantList = restaurantEntityPage.getContent().stream()
                 .map(this::mapToRestaurant)
-                .collect(Collectors.toList());
+                .toList();
 
         return new PageImpl<>(restaurantList, pageable, restaurantEntityPage.getTotalElements());
     }
@@ -115,20 +115,18 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
 
 
     private MealResponse mapToMealResponse(MealEntity mealEntity) {
-        return new MealResponse();
+        return new MealResponse( mealEntity.getName(), mealEntity.getPrice(),mealEntity.getDescription(), mealEntity.getUrlImage(), mealEntity.getCategory());
     }
 
-
+    @Override
     public Page<Order> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable) {
         return orderRepository.findByOrderStatusAndRestaurant(state, restaurant, pageable);
     }
-
+    @Override
     public Page<Order> getAssignedOrdersByStateAndRestaurant(OrderStatus state, Long employeeId, Long restaurantId, Pageable pageable) {
-        UserEntity user = userRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
 
         RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
+                .orElseThrow(() -> new EntityNotFoundException(restaurantNotFound));
 
         return orderRepository.findByOrderStatusAndAssignedEmployeeIdAndRestaurant(state, employeeId, restaurant, pageable);
     }

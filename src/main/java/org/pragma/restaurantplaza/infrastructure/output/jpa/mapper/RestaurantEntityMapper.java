@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 
-import java.util.List;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE,
@@ -15,5 +14,4 @@ public interface RestaurantEntityMapper {
 
     Restaurant toRestaurant(RestaurantEntity restaurantEntity);
 
-    List<Restaurant> toRestaurantList(List<RestaurantEntity> restaurantEntityList);
 }

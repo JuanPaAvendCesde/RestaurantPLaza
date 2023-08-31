@@ -14,7 +14,8 @@ import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundExcepti
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/client")
@@ -36,6 +36,7 @@ public class ClientRestController {
     private final RestaurantAdapter restaurantAdapter;
 
     private final OrderAdapter orderAdapter;
+    private final UserEntityMapper userEntityMapper;
 
 
 
@@ -57,6 +58,7 @@ public class ClientRestController {
     }
 
     @GetMapping("/allRestaurants")
+    @PreAuthorize("hasRole('Client')")
     @Operation(summary = "Get all restaurants",
             description = "Retrieve a paginated list of all restaurants.",
             responses = {
@@ -75,13 +77,24 @@ public class ClientRestController {
     }
 
     private RestaurantResponse mapToRestaurantResponse(Restaurant restaurant) {
-        return new RestaurantResponse(restaurant.getName(), restaurant.getUrlLogo());
+        UserEntity userEntity = userEntityMapper.toUserEntity(restaurant.getUserId());
+        return new RestaurantResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getNit(),
+                restaurant.getAddress(),
+                restaurant.getPhone(),
+                restaurant.getUrlLogo(),
+                userEntity,
+                restaurant.getMeals()
+        );
     }
 
 
 
 
     @GetMapping("/{restaurantId}/menu")
+    @PreAuthorize("hasRole('Client')")
     @Operation(summary = "Get restaurant menu",
             description = "Retrieve a paginated list of meals from a specific restaurant's menu.",
             responses = {
@@ -99,6 +112,7 @@ public class ClientRestController {
     }
 
     @PostMapping("/create_Order")
+    @PreAuthorize("hasRole('Client')")
     @Operation(summary = "Create a new order",
             description = "Place a new order for a client.",
             responses = {
@@ -121,16 +135,25 @@ public class ClientRestController {
 
 
     @PostMapping("/{orderId}/cancel")
+    @PreAuthorize("hasRole('Client')")
+    @Operation(summary = "Create a new order",
+            description = "Place a new order for a client.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Order created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "404", description = "Client not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            })
     public ResponseEntity<String> cancelOrder(@PathVariable Long orderId,OrderRequest orderRequest) {
         Order order = orderAdapter.getOrderById(orderId);
 
-        orderRequest.setId(order.getId()); // Set the order ID
+        orderRequest.setId(order.getId());
 
         try {
             orderAdapter.cancelOrder(orderRequest);
-            return ResponseEntity.ok("Pedido cancelado exitosamente");
+            return ResponseEntity.ok("Order canceled successfully");
         } catch (InvalidStateException e) {
-            return ResponseEntity.badRequest().body("No se puede cancelar el pedido");
+            return ResponseEntity.badRequest().body("Can't cancel order");
         }
     }
 

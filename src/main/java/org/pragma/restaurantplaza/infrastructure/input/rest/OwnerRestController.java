@@ -107,6 +107,7 @@ public class OwnerRestController {
         }
     }
     @GetMapping("/orderEfficiency")
+    @PreAuthorize("hasRole('Owner')")
     @Operation(summary = "Get order efficiency",
             description = "Retrieve order efficiency statistics.",
             responses = {
@@ -120,6 +121,7 @@ public class OwnerRestController {
     }
 
     @GetMapping("/employeeEfficiency")
+    @PreAuthorize("hasRole('Owner')")
     @Operation(summary = "Get employee efficiency",
             description = "Retrieve employee efficiency statistics.",
             responses = {

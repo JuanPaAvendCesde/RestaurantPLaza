@@ -10,6 +10,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     private final IRestaurantPersistencePort restaurantPersistencePort;
 
     public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort) {
+
         this.restaurantPersistencePort = restaurantPersistencePort;
     }
 

@@ -11,5 +11,4 @@ public interface MealEntityMapper {
 
     MealEntity toMealEntity(Meal meal);
 
-    Meal toMeal(MealEntity mealEntity);
 }
