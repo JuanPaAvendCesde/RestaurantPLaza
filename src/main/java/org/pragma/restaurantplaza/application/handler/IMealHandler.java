@@ -4,5 +4,5 @@ import org.pragma.restaurantplaza.application.dto.MealRequest;
 import org.pragma.restaurantplaza.application.dto.UserRequest;
 
 public interface IMealHandler {
-    void saveMeal(MealRequest mealRequest, UserRequest userRequest);
+    void saveMeal(MealRequest mealRequest);
 }

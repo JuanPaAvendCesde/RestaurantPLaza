@@ -5,9 +5,11 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'com.exxample.RestaurantPlaza'
+group = 'com.example.RestaurantPlaza'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = "16"
+java {
+	sourceCompatibility = '17'
+}
 
 configurations {
 	compileOnly {
@@ -18,28 +20,31 @@ configurations {
 repositories {
 	mavenCentral()
 }
+
 ext {
 	springBootVersion = "2.7.3"
 	mapstructVersion = "1.5.2.Final"
-	lombokVersion = "1.18.24"
+	lombokVersion = "1.18.28"
 	lombokMapstructBindingVersion = "0.2.0"
 	mySqlConnectorVersion = "8.0.32"
 	openApiVersion = "1.6.11"
+	jacocoVersion = "0.8.7"
 }
+
 dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.projectlombok:lombok:1.18.28'
 
-	implementation 'com.twilio.sdk:twilio:9.9.1'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation "org.projectlombok:lombok:${lombokVersion}"
+
+	implementation "com.twilio.sdk:twilio:9.9.1"
+	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
 
 	implementation 'org.slf4j:slf4j-api:1.7.32'
 
-	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+	annotationProcessor 'org.mapstruct:mapstruct-processor:${mapstructVersion}'
 	developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testImplementation 'org.mockito:mockito-core:3.12.4'
@@ -48,7 +53,6 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 	runtimeOnly "mysql:mysql-connector-java:${mySqlConnectorVersion}"
 
-	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
@@ -56,10 +60,15 @@ dependencies {
 
 	implementation "org.springdoc:springdoc-openapi-ui:${openApiVersion}"
 	implementation "org.springdoc:springdoc-openapi-webflux-ui:${openApiVersion}"
-}
 
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+	testImplementation "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+	testImplementation "org.mockito:mockito-core:3.12.4"
+
+	testImplementation "org.jacoco:org.jacoco.core:${jacocoVersion}"
+	testRuntimeOnly "org.jacoco:org.jacoco.agent:${jacocoVersion}"
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
-targetCompatibility = JavaVersion.VERSION_16

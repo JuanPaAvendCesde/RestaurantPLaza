@@ -53,7 +53,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository);
+        return new RestaurantAdapter(restaurantRepository, restaurantEntityMapper, mealRepository,orderRepository,userRepository);
     }
 
     @Bean
@@ -63,7 +63,7 @@ public class BeanConfiguration {
 
     @Bean
     public IMealPersistencePort mealPersistencePort() {
-        return new MealAdapter(mealRepository, mealEntityMapper);
+        return new MealAdapter(mealRepository, mealEntityMapper, restaurantRepository);
     }
 
     @Bean
@@ -73,7 +73,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderAdapter(orderRepository, orderEntityMapper, userRepository, mealEntityMapper,userEntityMapper, restaurantEntityMapper);
+        return new OrderAdapter(orderRepository, orderEntityMapper, userRepository, mealEntityMapper,userEntityMapper, restaurantEntityMapper, restaurantRepository, mealRepository);
     }
 
     @Bean

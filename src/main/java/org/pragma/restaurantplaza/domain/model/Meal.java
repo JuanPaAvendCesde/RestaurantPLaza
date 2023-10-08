@@ -52,7 +52,9 @@ public class Meal {
         return category;
     }
 
+
+
     public Restaurant getRestaurantId() {
         return restaurantId;
-    }
-}
+
+}}

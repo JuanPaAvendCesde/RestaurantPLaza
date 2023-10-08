@@ -19,12 +19,15 @@ public class RestaurantHandler implements IRestaurantHandler {
     private final IRestaurantServicePort restaurantServicePort;
     private final RestaurantRequestMapper restaurantRequestMapper;
 
-    private final UserRequestMapper userRequestMapper;
+    /*private final UserRequestMapper userRequestMapper;
+
+    private final UserRequest userRequest;*/
 
     @Override
-    public void saveRestaurant(RestaurantRequest restaurantRequest, UserRequest userRequest) {
+    public void saveRestaurant(RestaurantRequest restaurantRequest) {
         Restaurant restaurant = restaurantRequestMapper.toRestaurant(restaurantRequest);
-        User user = userRequestMapper.toOwner(userRequest);
-        restaurantServicePort.saveRestaurant(restaurant, user);
+       /* User user = userRequestMapper.toOwner(userRequest);
+        restaurant.setOwnerId(user);*/
+        restaurantServicePort.saveRestaurant(restaurant);
     }
 }

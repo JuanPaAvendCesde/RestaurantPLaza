@@ -12,4 +12,8 @@ public interface IUserPersistencePort {
     User findById(User userId);
 
     Restaurant getEmployeeRestaurant(Long id);
+
+    boolean deleteUserById(Long id);
+
+    User getUserById(Long id);
 }

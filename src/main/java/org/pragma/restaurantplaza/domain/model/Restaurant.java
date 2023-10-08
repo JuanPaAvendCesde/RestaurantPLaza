@@ -1,9 +1,6 @@
 package org.pragma.restaurantplaza.domain.model;
 
 import lombok.AllArgsConstructor;
-import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
-
-import java.util.List;
 
 
 @AllArgsConstructor
@@ -15,8 +12,8 @@ public class Restaurant {
     private String address;
     private String phone;
     private String urlLogo;
-    private User userId;
-    private List<MealEntity> meals;
+    private User ownerId;
+   /* private List<MealEntity> meals;*/
 
     public Long getId() {
         return id;
@@ -66,19 +63,21 @@ public class Restaurant {
         this.urlLogo = urlLogo;
     }
 
-    public User getUserId() {
-        return userId;
+
+
+    public User getOwnerId() {
+        return ownerId;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setOwnerId(User ownerId) {
+        this.ownerId = ownerId;
     }
-
+/*
     public List<MealEntity> getMeals() {
         return meals;
     }
 
     public void setMeals(List<MealEntity> meals) {
         this.meals = meals;
-    }
+    }*/
 }

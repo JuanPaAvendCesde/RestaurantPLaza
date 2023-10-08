@@ -1,22 +1,18 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.pragma.restaurantplaza.application.dto.MealRequest;
 import org.pragma.restaurantplaza.application.dto.MealResponse;
-import org.pragma.restaurantplaza.domain.model.Meal;
-import org.pragma.restaurantplaza.domain.model.User;
+import org.pragma.restaurantplaza.application.dto.RestaurantResponse;
 import org.pragma.restaurantplaza.domain.spi.IMealPersistencePort;
-import org.pragma.restaurantplaza.infrastructure.exception.InvalidMealPriceException;
-import org.pragma.restaurantplaza.infrastructure.exception.InvalidUserRoleException;
-import org.pragma.restaurantplaza.infrastructure.exception.MealNotFoundException;
-import org.pragma.restaurantplaza.infrastructure.exception.UserAlreadyExistException;
+import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class MealAdapter implements IMealPersistencePort {
@@ -27,56 +23,63 @@ public class MealAdapter implements IMealPersistencePort {
 
     private final MealEntityMapper mealEntityMapper;
 
+    private final IRestaurantRepository restaurantRepository;
+
     @Override
-    public void saveMeal(Meal meal, User user) {
+    public void saveMeal(MealRequest meal) {
         if (mealRepository.findById(meal.getId()).isPresent()) {
             throw new UserAlreadyExistException("meal already exists");
         }
-        if (!user.getRole().equals(ROLE)) {
-            throw new InvalidUserRoleException("User must have the 'Owner' role to create a meal");
-        }
+
         if (meal.getPrice() <= 0) {
             throw new InvalidMealPriceException("Meal price must be a positive number greater than 0");
         }
+
+        RestaurantEntity restaurant = restaurantRepository.findById(meal.getRestaurantId().getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         mealRepository.save(mealEntityMapper.toMealEntity(meal));
     }
 
     @Override
-    public void updateMeal(Long mealId, int newPrice, String newDescription) {
-        Optional<MealEntity> existingMeal = mealRepository.findById(mealId);
-        if (existingMeal.isEmpty()) {
-            throw new MealNotFoundException("Meal not found");
+    public void updateMeal(MealRequest meal) {
+
+        MealEntity existingMeal = mealRepository.findById(meal.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Meal not found"));
+
+
+        if (meal.getPrice() > 0) {
+            existingMeal.setPrice(meal.getPrice());
+        }
+        if (meal.getDescription() != null) {
+            existingMeal.setDescription(meal.getDescription());
         }
 
-        if (!existingMeal.get().getRestaurantId().getUserId().getRole().equals(ROLE)) {
-            throw new InvalidUserRoleException("User must have the 'Owner' role to update a meal");
-        }
 
-        MealEntity mealEntity = existingMeal.get();
-        mealEntity.setPrice(newPrice);
-        mealEntity.setDescription(newDescription);
-        mealRepository.save(mealEntity);
+        mealRepository.save(existingMeal);
     }
-    @Override
-    public void changeMealStatus(Long mealId, boolean active) {
-        Optional<MealEntity> existingMeal = mealRepository.findById(mealId);
-        if (existingMeal.isEmpty()) {
-            throw new MealNotFoundException("Meal not found");
-        }
-        if (!existingMeal.get().getRestaurantId().getUserId().getRole().equals(ROLE)) {
-            throw new InvalidUserRoleException("Invalid user role");
-        }
-        MealEntity mealEntity = existingMeal.get();
+
+
+    public void changeMealStatusById(Long mealId, boolean active) {
+        MealEntity mealEntity = mealRepository.findById(mealId)
+                .orElseThrow(() -> new MealNotFoundException("Meal not found"));
+
         mealEntity.setActive(active);
         mealRepository.save(mealEntity);
     }
 
-    public Page<MealResponse> getRestaurantMenuByCategory(RestaurantEntity restaurant, String category, int page, int size) {
-        Page<MealEntity> mealEntityPage = mealRepository.findByRestaurantIdAndCategory( restaurant,category, PageRequest.of(page, size));
-        return mealEntityPage.map(this::mapToMealResponse);
+    @Override
+    public MealResponse mapToMealResponse(MealEntity mealEntity) {
+        MealResponse mealResponse = new MealResponse();
+        mealResponse.setName(mealEntity.getName());
+        mealResponse.setPrice(mealEntity.getPrice());
+        mealResponse.setDescription(mealEntity.getDescription());
+        mealResponse.setUrlImage(mealEntity.getUrlImage());
+
+        return mealResponse;
     }
 
-    private MealResponse mapToMealResponse(MealEntity mealEntity) {
-        return new MealResponse(  mealEntity.getName(), mealEntity.getPrice(),mealEntity.getDescription(), mealEntity.getUrlImage(), mealEntity.getCategory());
+    public Page<MealResponse> getMenuByRestaurant(RestaurantEntity restaurantEntity, String category, Pageable pageable) {
+        return mealRepository.findByRestaurantIdAndCategoryAndActiveTrue(restaurantEntity, category, pageable)
+                .map(this::mapToMealResponse);
     }
 }

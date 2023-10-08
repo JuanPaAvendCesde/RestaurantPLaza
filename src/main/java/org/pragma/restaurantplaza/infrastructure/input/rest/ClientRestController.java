@@ -12,8 +12,11 @@ import org.pragma.restaurantplaza.domain.model.Order;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
 import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundException;
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.MealAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.RestaurantAdapter;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.springframework.data.domain.Page;
@@ -22,10 +25,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/client")
@@ -34,17 +37,11 @@ public class ClientRestController {
 
     private final UserHandler userHandler;
     private final RestaurantAdapter restaurantAdapter;
-
-    private final OrderAdapter orderAdapter;
+    private final MealAdapter mealAdapter;
     private final UserEntityMapper userEntityMapper;
 
 
-
-
-
-
-    @PostMapping("/saveClient")
-    @PreAuthorize("hasRole('Client')")
+    @PostMapping("/save_client")
     @Operation(summary = "Save a new client",
             description = "This endpoint allows registration of a new client.",
             responses = {
@@ -57,44 +54,36 @@ public class ClientRestController {
         return ResponseEntity.ok("Client created successfully");
     }
 
-    @GetMapping("/allRestaurants")
-    @PreAuthorize("hasRole('Client')")
-    @Operation(summary = "Get all restaurants",
-            description = "Retrieve a paginated list of all restaurants.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Successful retrieval of restaurants"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
-            })
-    public Page<RestaurantResponse> getAllRestaurants(
+
+
+    @GetMapping("/list")
+    public Page<RestaurantResponse> listRestaurantsOrderedByName(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
-
-        Page<Restaurant> restaurantPage = restaurantAdapter.findAll(pageable);
-
-        return restaurantPage.map(this::mapToRestaurantResponse);
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return restaurantAdapter.getAllRestaurantsOrderedByName(pageable);
     }
 
-    private RestaurantResponse mapToRestaurantResponse(Restaurant restaurant) {
-        UserEntity userEntity = userEntityMapper.toUserEntity(restaurant.getUserId());
-        return new RestaurantResponse(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getNit(),
-                restaurant.getAddress(),
-                restaurant.getPhone(),
-                restaurant.getUrlLogo(),
-                userEntity,
-                restaurant.getMeals()
-        );
+    @GetMapping("/menu/{restaurantId}")
+    public Page<MealResponse> listMenu(
+            @PathVariable Long restaurantId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = true) String category) {
+        RestaurantEntity restaurantEntity = restaurantAdapter.findById(restaurantId);
+        Pageable pageable = PageRequest.of(page, size);
+        return mealAdapter.getMenuByRestaurant(restaurantEntity, category, pageable);
     }
 
 
 
+
+
+
+
+/*
 
     @GetMapping("/{restaurantId}/menu")
-    @PreAuthorize("hasRole('Client')")
     @Operation(summary = "Get restaurant menu",
             description = "Retrieve a paginated list of meals from a specific restaurant's menu.",
             responses = {
@@ -111,8 +100,7 @@ public class ClientRestController {
         return restaurantAdapter.getRestaurantMenuByCategory(restaurantId,name, category, page, size);
     }
 
-    @PostMapping("/create_Order")
-    @PreAuthorize("hasRole('Client')")
+    @PostMapping("/create_order")
     @Operation(summary = "Create a new order",
             description = "Place a new order for a client.",
             responses = {
@@ -134,8 +122,7 @@ public class ClientRestController {
 
 
 
-    @PostMapping("/{orderId}/cancel")
-    @PreAuthorize("hasRole('Client')")
+    @PostMapping("/{orderId}/cancel_order")
     @Operation(summary = "Create a new order",
             description = "Place a new order for a client.",
             responses = {
@@ -157,6 +144,7 @@ public class ClientRestController {
         }
     }
 
+*/
 
     }
 

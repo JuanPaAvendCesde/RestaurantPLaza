@@ -2,7 +2,9 @@ package org.pragma.restaurantplaza.domain.usecase;
 
 import org.pragma.restaurantplaza.application.dto.OrderRequest;
 import org.pragma.restaurantplaza.domain.api.IOrderServicePort;
+import org.pragma.restaurantplaza.domain.model.Order;
 import org.pragma.restaurantplaza.domain.spi.IOrderPersistencePort;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
 
 public class OrderUseCase implements IOrderServicePort {
 
@@ -12,9 +14,6 @@ public class OrderUseCase implements IOrderServicePort {
         this.orderPersistencePort = orderPersistencePort;
     }
 
-    @Override
-    public void createOrder(OrderRequest orderRequest) {
-        orderPersistencePort.createOrder(orderRequest);
-        
-    }
+
+
 }

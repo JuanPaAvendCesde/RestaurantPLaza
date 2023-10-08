@@ -10,6 +10,7 @@ import org.pragma.restaurantplaza.application.handler.OrderHandler;
 import org.pragma.restaurantplaza.application.handler.UserHandler;
 import org.pragma.restaurantplaza.domain.model.OrderStatus;
 import org.pragma.restaurantplaza.domain.model.Restaurant;
+import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundException;
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.adapter.OrderAdapter;
 import org.springframework.data.domain.Page;
@@ -19,8 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,35 +37,9 @@ public class EmployeeRestController {
     private final UserHandler userHandler;
     private final OrderAdapter orderAdapter;
 
-    @GetMapping("/orders_by_state")
-    @PreAuthorize("hasRole('Employee')")
-    @Operation(summary = "Get orders by state",
-            description = "Retrieve a paginated list of orders based on their state, filtered for the current restaurant's employee.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Successful retrieval of orders"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input parameters"),
-                    @ApiResponse(responseCode = "403", description = "Permission denied")
-            })
-    public ResponseEntity<Page<OrderResponse>> getOrdersByState(
-            @RequestParam(required = false) OrderStatus state,
-            @RequestParam(defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(defaultValue = "10") @Positive int size,
-            Authentication authentication) {
+   
+  /*  @GetMapping("/assigned_order")
 
-
-        UserRequest user = (UserRequest) authentication.getPrincipal();
-        Restaurant restaurant = userHandler.getEmployeeRestaurant(user.getId());
-        if (restaurant == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Employee does not belong to any restaurant");
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<OrderResponse> ordersPage = orderHandler.getOrdersByStateAndRestaurant(state, restaurant, pageable);
-
-        return ResponseEntity.ok(ordersPage);
-    }
-    @GetMapping("/assigned_order")
-    @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<Page<OrderResponse>> getAssignedOrdersByStateAndRestaurant(
             @RequestParam OrderStatus state,
             @RequestParam Long employeeId,
@@ -73,11 +47,11 @@ public class EmployeeRestController {
             @PageableDefault(size = 10) Pageable pageable) {
         Page<OrderResponse> orders = orderHandler.getAssignedOrdersByStateAndRestaurant(state, employeeId, restaurantId, pageable);
         return ResponseEntity.ok(orders);
-    }
+    }*/
 
 
-    @PostMapping("/{orderId}/markAsDelivered")
-    @PreAuthorize("hasRole('OWNER')")
+   /* @PostMapping("/{orderId}/markAs_Delivered")
+
     @Operation(summary = "Mark an order as delivered",
             description = "This endpoint allows an owner to mark an order as delivered.",
             responses = {
@@ -97,6 +71,30 @@ public class EmployeeRestController {
             return ResponseEntity.badRequest().body("Unable to mark order as delivered");
         }
     }
+
+   /* @PostMapping("/{orderId}/assign_employee")
+    @Operation(summary = "Assign Order to Employee and Change Status",
+            description = "Assigns an order to an employee and changes its status to 'IN_PREPARATION'.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Order assigned and status changed successfully"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "404", description = "Order or employee not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
+   public ResponseEntity<String> assignOrderToEmployeeAndChangeStatus(
+            @PathVariable Long orderId,
+            @RequestParam Long employeeId) {
+        try {
+            orderAdapter.assignOrderToEmployeeAndChangeStatus(orderId, employeeId);
+            return ResponseEntity.ok("Order assigned and status changed successfully");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order or employee not found");
+        } catch (InvalidStateException e) {
+            return ResponseEntity.badRequest().body("Cannot assign an order that is not pending");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }*/
 
 
 

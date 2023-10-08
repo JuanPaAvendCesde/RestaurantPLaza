@@ -13,17 +13,21 @@ import org.pragma.restaurantplaza.infrastructure.exception.EntityNotFoundExcepti
 import org.pragma.restaurantplaza.infrastructure.exception.InvalidStateException;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.OrderEntity;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.RestaurantEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.MealEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.OrderEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.RestaurantEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IMealRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IOrderRepository;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IRestaurantRepository;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -39,10 +43,12 @@ public class OrderAdapter implements IOrderPersistencePort {
     private final MealEntityMapper mealEntityMapper;
     private final UserEntityMapper userEntityMapper;
     private final RestaurantEntityMapper restaurantEntityMapper;
-    private List<Meal> selectedMeals;
+    private final IRestaurantRepository restaurantRepository;
+    private final IMealRepository mealRepository;
 
-    @Override
-    public void createOrder(OrderRequest orderRequest) {
+
+   /* @Override
+   /* public void createOrder(OrderRequest orderRequest) {
         UserEntity user = userRepository.findById(orderRequest.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
 
@@ -54,18 +60,72 @@ public class OrderAdapter implements IOrderPersistencePort {
         orderRepository.save(orderEntityMapper.toOrderEntity(order));
 
 
-
         sendOrderNotification(user, "1234", orderRequest);
         createStatusLog(orderRequest);
 
+    }*/
+
+    public OrderEntity createOrder(Long userId, Long restaurantId, List<OrderResponse> orderItems) {
+
+        if (hasActiveOrders(userId)) {
+            throw new IllegalStateException("El usuario tiene pedidos en proceso.");
+        }
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado."));
+
+        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante no encontrado."));
+
+
+        OrderEntity order = new OrderEntity();
+        order.setUser(user);
+        order.setRestaurant(restaurant);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setQuantity(orderItems.size());
+        order.setTimestamp(LocalDateTime.now());
+        order.setCreateAt(LocalDateTime.now());
+        order.setUpdateAt(LocalDateTime.now());
+
+
+        int totalAmount = 0;
+        for (OrderResponse orderResponse : orderItems) {
+            MealEntity meal = mealRepository.findById(orderResponse.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Plato no encontrado."));
+
+
+            if (!meal.getRestaurantId().equals(restaurantId)) {
+                throw new IllegalArgumentException("El plato no pertenece al restaurante especificado.");
+            }
+
+
+            if (orderResponse.getQuantity() <= 0) {
+                throw new IllegalArgumentException("La cantidad del plato debe ser mayor que cero.");
+            }
+
+            totalAmount += meal.getPrice() * orderResponse.getQuantity();
+            order.getMeals().add(meal);
+        }
+
+        order.setTotalAmount(totalAmount);
+        orderRepository.save(order);
+
+        return order;
     }
 
-    private static Order getOrder(OrderRequest orderRequest, UserEntity client, List<MealEntity> selectedMealEntities) {
+    private boolean hasActiveOrders(Long userId) {
+        List<OrderStatus> activeStatuses = Arrays.asList(OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY);
+
+        return orderRepository.existsByUserIdAndOrderStatusIn(userId, activeStatuses);
+    }
+}
+
+    /*private static Order getOrder(OrderRequest orderRequest, UserEntity client, List<MealEntity> selectedMealEntities) {
         User user = new User(client.getId(), client.getName(), client.getDocument(), client.getPhone(), client.getBirthdate(), client.getEmail(), client.getRole(), client.getPassword());
 
-        Order order = new Order(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getAssignedEmployeeId(), orderRequest.getQuantity(), orderRequest.getSecurityPin(), orderRequest.getCreateAt(), orderRequest.getUpdateAt(), orderRequest.getEstimatedTime());
+        Order order = getOrder(client.getId(), user, orderRequest.getRestaurant(), selectedMealEntities, OrderStatus.PENDING, orderRequest.getAssignedEmployeeId(), orderRequest.getQuantity(), orderRequest.getSecurityPin(), orderRequest.getCreateAt(), orderRequest.getUpdateAt(), orderRequest.getEstimatedTime());
         order.setUser(user);
-        order.setRestaurant(orderRequest.getRestaurant());
+       /* order.setRestaurant(orderRequest.getRestaurant());
         order.setMeals(orderRequest.getMeals());
         order.setQuantity(orderRequest.getQuantity());
         order.setOrderStatus(OrderStatus.PENDING);
@@ -80,7 +140,7 @@ public class OrderAdapter implements IOrderPersistencePort {
             messageBody = "Your Order is Pending. ";
 
         if (orderRequest.getOrderStatus().equals(OrderStatus.IN_PREPARATION))
-            messageBody ="Your order is in preparation.";
+            messageBody = "Your order is in preparation.";
 
         if (orderRequest.getOrderStatus().equals(OrderStatus.READY))
             messageBody = "Your order is ready to be picked up. ";
@@ -95,12 +155,13 @@ public class OrderAdapter implements IOrderPersistencePort {
         Message message = Message.creator(
                 new PhoneNumber(user.getPhone()),
                 new PhoneNumber(TWILIO_PHONE_NUMBER),
-                messageBody +"Present the following security pin: " + pin
+                messageBody + "Present the following security pin: " + pin
         ).create();
 
         System.out.println("Message SID: " + message.getSid());
 
     }
+
     @Override
     public void markOrderAsDelivered(String providedPin, Long orderId) {
         Order order = getOrderById(orderId);
@@ -134,6 +195,7 @@ public class OrderAdapter implements IOrderPersistencePort {
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow();
         return orderEntityMapper.toOrder(orderEntity);
     }
+
     @Override
     public void cancelOrder(OrderRequest orderRequest) {
         if (orderRequest.getOrderStatus() == OrderStatus.PENDING) {
@@ -143,6 +205,7 @@ public class OrderAdapter implements IOrderPersistencePort {
             throw new InvalidStateException("Can't cancel order");
         }
     }
+
     @Override
     public void createStatusLog(OrderRequest orderRequest) {
         OrderEntity log = new OrderEntity();
@@ -151,7 +214,8 @@ public class OrderAdapter implements IOrderPersistencePort {
         orderRepository.save(log);
 
     }
-    @Override
+
+   /* @Override
     public List<OrderResponse> calculateOrderEfficiency() {
         List<OrderEntity> orders = orderRepository.findAll();
         List<OrderResponse> orderEfficiencyList = new ArrayList<>();
@@ -214,27 +278,22 @@ public class OrderAdapter implements IOrderPersistencePort {
         return employeeEfficiencyList;
     }
 
-   /* @Override
-    public void asignarPedidoAEmpleado(Long pedidoId, Long empleadoId) throws EntityNotFoundException, InvalidStateException {
-        Order pedido = getOrderById(pedidoId);
-        Empleado empleado = ... // Obtén el empleado por su ID, por ejemplo, desde el userRepository
-        if (!pedido.getEstado().equals(EstadoPedido.PENDIENTE)) {
-            throw new InvalidStateException("No se puede asignar un pedido que no está pendiente");
+    @Override
+    public void assignOrderToEmployeeAndChangeStatus(Long orderId, Long employeeId) {
+        Order order = getOrderById(orderId);
+
+        UserEntity employee = userRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        if (!order.getOrderStatus().equals(OrderStatus.PENDING)) {
+            throw new InvalidStateException("Cannot assign an order that is not pending");
         }
-        pedido.setEmpleadoAsignado(empleado);
-        pedido.setEstado(EstadoPedido.EN_PREPARACION);
-        orderRepository.save(orderEntityMapper.toOrderEntity(pedido));
+
+        order.setAssignedEmployeeId(employee.getId());
+        order.setOrderStatus(OrderStatus.IN_PREPARATION);
+
+        orderRepository.save(orderEntityMapper.toOrderEntity(order));
     }
 
-    @Override
-    public void cambiarEstadoPedido(Long pedidoId, EstadoPedido nuevoEstado) throws PedidoNotFoundException, InvalidStateException {
-        Pedido pedido = getOrderById(pedidoId);
-        if (!isValidEstadoTransition(pedido.getEstado(), nuevoEstado)) {
-            throw new InvalidStateException("Transición de estado no válida");
-        }
-        pedido.setEstado(nuevoEstado);
-        orderRepository.save(orderEntityMapper.toOrderEntity(pedido));
-    }*/
 
-
-}
+*/

@@ -8,7 +8,7 @@ import org.pragma.restaurantplaza.infrastructure.exception.*;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.UserEntity;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.mapper.UserEntityMapper;
 import org.pragma.restaurantplaza.infrastructure.output.jpa.repository.IUserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -41,15 +41,12 @@ public class UserAdapter implements IUserPersistencePort {
             throw new InvalidDocumentException("Invalid document format");
         }
 
-        String passEncrypted = passWithBcrypt(user.getPassword());
-        user.setPassword(passEncrypted);
+
+
         userRepository.save(userEntityMapper.toUserEntity(user));
     }
 
-    private String passWithBcrypt(String pass) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.encode(pass);
-    }
+
 
     @Override
     public List<User> getAllOwners() {
@@ -70,8 +67,24 @@ public class UserAdapter implements IUserPersistencePort {
         return userEntityMapper.toRestaurant(userEntity);
     }
 
+    @Override
+    public boolean deleteUserById(Long id) {
+        if (userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
- private boolean isValidPhoneNumber(String phoneNumber) {
+    @Override
+    public User getUserById(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        return userEntityMapper.toUser(userEntity);
+    }
+
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
 
         if (phoneNumber.length() > 13) {
             return false;

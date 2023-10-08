@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
+
 public class RestaurantRequest {
 
     private Long id;
@@ -25,6 +25,6 @@ public class RestaurantRequest {
 
     private String urlLogo;
 
-    private UserEntity userId;
-    private List<MealEntity> meals;
+    private UserEntity ownerId;
+
 }

@@ -30,10 +30,6 @@ public class MealEntity {
     private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meals")
-    private OrderEntity meals;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurantId")
     private RestaurantEntity restaurantId;
     private boolean active = true;

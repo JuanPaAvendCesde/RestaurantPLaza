@@ -1,16 +1,21 @@
 package org.pragma.restaurantplaza.domain.spi;
 
+import org.pragma.restaurantplaza.application.dto.MealRequest;
+import org.pragma.restaurantplaza.application.dto.MealResponse;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.model.User;
+import org.pragma.restaurantplaza.infrastructure.output.jpa.entity.MealEntity;
 
 
 public interface IMealPersistencePort {
 
 
-    void saveMeal(Meal meal, User user);
+    void saveMeal(MealRequest meal);
 
-    void updateMeal(Long mealId, int newPrice, String newDescription);
+    void updateMeal(MealRequest meal);
 
 
-    void changeMealStatus(Long mealId, boolean active);
+    void changeMealStatusById(Long mealId, boolean active);
+
+    MealResponse mapToMealResponse(MealEntity mealEntity);
 }

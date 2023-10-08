@@ -1,5 +1,6 @@
 package org.pragma.restaurantplaza.domain.usecase;
 
+import org.pragma.restaurantplaza.application.dto.MealRequest;
 import org.pragma.restaurantplaza.domain.api.IMealServicePort;
 import org.pragma.restaurantplaza.domain.model.Meal;
 import org.pragma.restaurantplaza.domain.model.User;
@@ -12,7 +13,7 @@ public class MealUseCase implements IMealServicePort {
         this.mealPersistencePort = mealPersistencePor;
     }
     @Override
-    public void saveMeal(Meal meal, User user) {
-        mealPersistencePort.saveMeal(meal, user);
+    public void saveMeal(MealRequest meal) {
+        mealPersistencePort.saveMeal(meal);
     }
 }

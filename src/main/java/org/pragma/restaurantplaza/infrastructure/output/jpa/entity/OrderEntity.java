@@ -1,6 +1,6 @@
 package org.pragma.restaurantplaza.infrastructure.output.jpa.entity;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "order_user")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class OrderEntity {
@@ -46,5 +45,6 @@ public class OrderEntity {
     private LocalDateTime timestamp;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private Integer TotalAmount;
 
 }

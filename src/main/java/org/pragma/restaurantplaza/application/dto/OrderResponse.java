@@ -17,14 +17,14 @@ import java.util.List;
 public class OrderResponse {
     private Long id;
 
-    private User user;
+    /*private User user;*/
 
     private Restaurant restaurant;
 
     private List<MealEntity> meals;
 
-    private OrderStatus orderStatus;
-    private Long assignedEmployeeId;
+   /* private OrderStatus orderStatus;
+   /* private Long assignedEmployeeId;*/
     private int quantity;
     private String securityPin;
     private LocalDateTime createAt;

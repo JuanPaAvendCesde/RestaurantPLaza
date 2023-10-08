@@ -23,24 +23,25 @@ public class RestaurantEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+    @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-z0-9]+$")
     private String name;
-    @NotBlank
+
     private Integer nit;
-    @NotBlank
+
     private String address;
     @Size(max = 13)
-    @Pattern(regexp = "[0-9+]")
-    @NotBlank
+    @Pattern(regexp = "\\+[0-9]{12}")
+
     private String phone;
-    @NotBlank
+
     private String urlLogo;
-    @NotBlank
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private UserEntity userId;
+    @JoinColumn(name = "ownerId") // Asegúrate de que coincida con el nombre de la columna en tu base de datos
+    private UserEntity ownerId;
     @OneToMany(mappedBy = "restaurantId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealEntity> meals;
+
 
 
 }

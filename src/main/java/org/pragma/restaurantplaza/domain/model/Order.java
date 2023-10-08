@@ -12,12 +12,12 @@ public class Order {
 
     private User user;
 
-    private Restaurant restaurant;
+    /*private Restaurant restaurant;
 
     private List<MealEntity> meals;
 
     private OrderStatus orderStatus;
-    private Long assignedEmployeeId;
+    private Long assignedEmployeeId;*/
     private int quantity;
 
     private String securityPin;
@@ -44,7 +44,7 @@ public class Order {
         this.user = user;
     }
 
-    public Restaurant getRestaurant() {
+   /* public Restaurant getRestaurant() {
         return restaurant;
     }
 
@@ -62,13 +62,13 @@ public class Order {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
-    }
+    }*/
 
     public int getQuantity() {
         return quantity;
     }
 
-    public Long getAssignedEmployeeId() {
+   /* public Long getAssignedEmployeeId() {
         return assignedEmployeeId;
     }
 
@@ -82,7 +82,7 @@ public class Order {
 
     public List<MealEntity> getMeals() {
         return meals;
-    }
+    }*/
 
     public String getSecurityPin() {
         return securityPin;

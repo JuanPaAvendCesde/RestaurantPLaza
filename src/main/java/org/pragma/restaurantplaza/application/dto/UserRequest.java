@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
+
 public class UserRequest {
     private Long id;
     private String name;

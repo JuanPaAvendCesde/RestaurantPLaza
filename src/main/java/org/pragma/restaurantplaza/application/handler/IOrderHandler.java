@@ -7,5 +7,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IOrderHandler {
-    Page<OrderResponse> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable);
+    /*Page<OrderResponse> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable);*/
 }

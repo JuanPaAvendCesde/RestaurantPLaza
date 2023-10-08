@@ -12,10 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface IOrderRepository extends JpaRepository<OrderEntity,Long> {
-    Page<Order> findByOrderStatusAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable);
+    boolean existsByUserIdAndOrderStatusIn(Long userId, List<OrderStatus> activeStatuses);
+   /* Page<Order> findByOrderStatusAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable);
 
     Page<Order> findByOrderStatusAndAssignedEmployeeIdAndRestaurant(OrderStatus state, Long employeeId, RestaurantEntity restaurant, Pageable pageable);
 
 
-    List<OrderEntity> findByAssignedEmployeeIdAndOrderStatus(long id, OrderStatus orderStatus);
+    List<OrderEntity> findByAssignedEmployeeIdAndOrderStatus(long id, OrderStatus orderStatus);*/
 }

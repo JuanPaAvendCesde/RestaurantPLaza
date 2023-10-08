@@ -26,8 +26,8 @@ public class OrderHandler implements IOrderHandler{
     private final IOrderRepository orderRepository;
     private final IRestaurantRepository restaurantRepository;
 
-    @Override
-    public Page<OrderResponse> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable) {
+   /* @Override
+     public Page<OrderResponse> getOrdersByStateAndRestaurant(OrderStatus state, Restaurant restaurant, Pageable pageable) {
         Page<Order> ordersPage = orderRepository.findByOrderStatusAndRestaurant(state, restaurant, pageable);
 
         List<OrderResponse> orderResponses = ordersPage.getContent()
@@ -39,7 +39,7 @@ public class OrderHandler implements IOrderHandler{
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }
 
-    private OrderResponse mapToOrderResponse(Order order) {
+   private OrderResponse mapToOrderResponse(Order order) {
         List<Long> meals = new ArrayList<>();
         for (MealEntity mealEntity : order.getMeals()) {
             Long id = mealEntity.getId();
@@ -70,5 +70,5 @@ public class OrderHandler implements IOrderHandler{
 
         return orderRepository.findByOrderStatusAndAssignedEmployeeIdAndRestaurant(state, employeeId, restaurant, pageable)
                 .map(order -> mapToOrderResponse(order));
-    }
+    }*/
 }

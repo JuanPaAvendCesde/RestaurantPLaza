@@ -27,18 +27,20 @@ public class MealHandler implements IMealHandler {
 
 
     @Override
-    public void saveMeal(MealRequest mealRequest, UserRequest userRequest) {
+    public void saveMeal(MealRequest mealRequest) {
         Meal meal = mealRequestMapper.toMeal(mealRequest);
-        User user = userRequestMapper.toOwner(userRequest);
-        mealServicePort.saveMeal(meal, user);
+
+        mealServicePort.saveMeal(mealRequest);
     }
 
-    public void updateMeal(Long mealId, int newPrice, String newDescription) {
-        mealAdapter.updateMeal(mealId, newPrice, newDescription);
+    public void updateMeal(MealRequest mealRequest) {
+        mealAdapter.updateMeal(mealRequest);
     }
 
 
-    public boolean changeMealStatus(boolean active) {
-        return active;
+
+
+    public void changeMealStatusById(Long mealId, boolean active) {
+        mealAdapter.changeMealStatusById(mealId, active);
     }
 }
